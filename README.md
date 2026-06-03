@@ -1,119 +1,140 @@
-# 🕳️ BucheStrade — Guida al Deploy su Vercel
+# 🕳️ BucheStrade v2 — Guida completa al deploy
 
-App PWA per la segnalazione e gestione delle buche stradali.
+App PWA per la segnalazione e gestione buche stradali con autenticazione, database e storage.
 
 ---
 
-## 🚀 Deploy su Vercel (passo per passo)
+## Stack
+- **Frontend**: React + Vite + PWA
+- **Database + Auth + Storage**: Supabase (gratuito)
+- **AI foto validation**: Anthropic Claude Vision
+- **Deploy**: Vercel
 
-### 1. Crea account GitHub (se non l'hai)
-Vai su [github.com](https://github.com) → Sign up
+---
 
-### 2. Crea un nuovo repository GitHub
-1. Clicca **"New repository"**
-2. Nome: `buche-strade`
-3. Visibilità: **Private** (consigliato)
-4. Clicca **Create repository**
+## PASSO 1 — Configura Supabase
 
-### 3. Carica i file su GitHub
-Hai due opzioni:
+### 1a. Crea il progetto
+1. Vai su [supabase.com](https://supabase.com) → "New project"
+2. Dai un nome (es. `buche-strade`), scegli una password e la regione **West EU**
+3. Aspetta ~2 minuti che si avvii
 
-**Opzione A — Upload manuale (più semplice):**
-1. Nella pagina del repo, clicca **"uploading an existing file"**
-2. Trascina TUTTI i file del progetto (mantieni la struttura delle cartelle)
-3. Clicca **"Commit changes"**
+### 1b. Crea le tabelle e le policy
+1. Nel menu a sinistra clicca **SQL Editor**
+2. Clicca **New query**
+3. Copia e incolla tutto il contenuto di `supabase-schema.sql`
+4. Clicca **Run** (o Ctrl+Enter)
+5. Dovresti vedere "Success. No rows returned"
 
-**Opzione B — Con Git da terminale:**
-```bash
-cd buche-strade
-git init
-git add .
-git commit -m "first commit"
-git remote add origin https://github.com/TUO_USERNAME/buche-strade.git
-git push -u origin main
+### 1c. Abilita il login con Google (opzionale)
+1. Menu → **Authentication → Providers**
+2. Clicca **Google** → abilita il toggle
+3. Segui le istruzioni per creare le credenziali OAuth su Google Cloud Console
+4. Inserisci Client ID e Client Secret → Save
+
+### 1d. Copia le credenziali Supabase
+1. Menu → **Project Settings → API**
+2. Copia:
+   - **Project URL** → `https://xxxx.supabase.co`
+   - **anon public key** → `eyJxxx...`
+
+---
+
+## PASSO 2 — Configura GitHub e Vercel
+
+### 2a. Carica su GitHub
+1. Crea repo su [github.com](https://github.com) → "New repository" → `buche-strade`
+2. Carica tutti i file dello ZIP mantenendo la struttura delle cartelle
+
+### 2b. Deploy su Vercel
+1. [vercel.com](https://vercel.com) → "Add New Project" → importa da GitHub
+2. Framework: **Vite** (rilevato automaticamente)
+3. Prima di cliccare Deploy, vai su **Environment Variables** e aggiungi:
+
+| Nome variabile | Valore |
+|---|---|
+| `VITE_SUPABASE_URL` | `https://xxxx.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | `eyJxxx...` |
+| `ANTHROPIC_API_KEY` | `sk-ant-xxx...` |
+
+4. Clicca **Deploy**
+
+---
+
+## PASSO 3 — Diventa Admin
+
+1. Apri l'app sul tuo link Vercel
+2. Registrati con la tua email
+3. Torna su Supabase → **SQL Editor** → esegui:
+
+```sql
+update public.profiles set role = 'admin' where email = 'TUA@EMAIL.COM';
 ```
 
-### 4. Deploy su Vercel
-1. Vai su [vercel.com](https://vercel.com) → Sign up con GitHub
-2. Clicca **"Add New Project"**
-3. Seleziona il repository `buche-strade`
-4. Framework: **Vite** (dovrebbe rilevarlo automaticamente)
-5. Clicca **Deploy**
+4. Ricarica l'app → vedrai la tab "⚙️ Admin"
 
-### 5. Aggiungi la chiave API Anthropic (IMPORTANTE)
-Senza questo passo la validazione AI non funziona.
+### Aggiungere altri admin o supervisor
+```sql
+-- Admin (accesso completo)
+update public.profiles set role = 'admin' where email = 'collega@comune.it';
 
-1. Nel progetto Vercel, vai su **Settings → Environment Variables**
-2. Aggiungi:
-   - **Name:** `ANTHROPIC_API_KEY`
-   - **Value:** `sk-ant-...` (la tua chiave da [console.anthropic.com](https://console.anthropic.com))
-3. Clicca **Save**
-4. Vai su **Deployments** → clicca i tre puntini sull'ultimo deploy → **Redeploy**
+-- Supervisor (può gestire segnalazioni, non eliminare)
+update public.profiles set role = 'supervisor' where email = 'supervisore@comune.it';
+```
 
-### 6. Installa l'app sullo smartphone
+---
+
+## PASSO 4 — Installa sul telefono come PWA
 
 **iPhone (Safari):**
 1. Apri il link Vercel su Safari
-2. Tocca l'icona **Condividi** (quadrato con freccia)
-3. Scorri e tocca **"Aggiungi a schermata Home"**
-4. Dai un nome → **Aggiungi**
+2. Tocca l'icona **Condividi** (quadrato con freccia in basso)
+3. Scorri → **"Aggiungi a schermata Home"** → Aggiungi
 
 **Android (Chrome):**
 1. Apri il link su Chrome
-2. Tocca i **tre puntini** in alto a destra
-3. Tocca **"Aggiungi a schermata Home"** o **"Installa app"**
+2. Tocca i **tre puntini** → **"Installa app"** o **"Aggiungi a schermata Home"**
 
 ---
 
-## 💻 Sviluppo locale
+## Sviluppo locale
 
 ```bash
-# Installa dipendenze
 npm install
-
-# Crea il file delle variabili d'ambiente
 cp .env.example .env.local
-# Modifica .env.local e inserisci la tua chiave API
-
-# Avvia in sviluppo
+# Modifica .env.local con le tue credenziali
 npm run dev
-
-# Build di produzione
-npm run build
 ```
 
 ---
 
-## 📁 Struttura del progetto
+## Struttura progetto
 
 ```
 buche-strade/
 ├── api/
-│   └── analyze-photo.js    ← Serverless function (proxy sicuro API Anthropic)
+│   └── analyze-photo.js      ← Proxy sicuro API Anthropic
 ├── src/
-│   ├── main.jsx            ← Entry point React
-│   └── App.jsx             ← Tutta l'app (Mappa, Segnala, Dashboard)
+│   ├── lib/
+│   │   └── supabase.js       ← Client Supabase + helpers
+│   ├── App.jsx               ← App completa (Auth, Mappa, Segnala, Dashboard)
+│   └── main.jsx              ← Entry point
+├── supabase-schema.sql       ← Schema DB da eseguire su Supabase
 ├── index.html
-├── vite.config.js          ← Config Vite + PWA
-├── vercel.json             ← Routing Vercel
+├── vite.config.js
+├── vercel.json
 ├── package.json
 └── .env.example
 ```
 
 ---
 
-## 🔒 Sicurezza
+## Ruoli utente
 
-- La chiave API Anthropic è gestita **solo dal server** (`/api/analyze-photo.js`)
-- Il browser non vede mai la chiave
-- Le variabili d'ambiente su Vercel sono crittografate
+| Ruolo | Cosa può fare |
+|---|---|
+| `user` | Registrarsi, segnalare buche, vedere mappa con buche validate |
+| `supervisor` | Tutto sopra + gestire tutte le segnalazioni dalla dashboard |
+| `admin` | Tutto sopra + eliminare segnalazioni + promuovere utenti |
 
----
-
-## 🗄️ Note sul database
-
-Attualmente i dati sono in memoria (si azzerano al refresh).
-Per produzione reale, integra un database come:
-- **Supabase** (PostgreSQL gratuito, con SDK React)
-- **PlanetScale** (MySQL serverless)
-- **Firebase Firestore** (NoSQL Google)
+I ruoli si assegnano **solo via SQL** — nessun utente può auto-promuoversi.
