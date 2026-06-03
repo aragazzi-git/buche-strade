@@ -349,9 +349,12 @@ function MappaPage({ segnalazioni, loading }) {
     risolte: segnalazioni.filter(s => s.stato === 'risolta').length,
   }
 
+  const centeredRef = useRef(false)
+
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
-    const map = L.map(mapRef.current).setView([41.9028, 12.4964], 13)
+    // Vista iniziale sull'Italia, verrà aggiornata dai marker reali
+    const map = L.map(mapRef.current).setView([41.9028, 12.4964], 6)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>'
     }).addTo(map)
@@ -373,6 +376,12 @@ function MappaPage({ segnalazioni, loading }) {
       marker.on('click', () => setSelected(s))
       markersRef.current.push(marker)
     })
+    // Prima volta che arrivano i dati: centra la mappa su tutti i marker
+    if (!centeredRef.current && markersRef.current.length > 0) {
+      centeredRef.current = true
+      const group = L.featureGroup(markersRef.current)
+      map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 15 })
+    }
   }, [visible])
 
   return (
