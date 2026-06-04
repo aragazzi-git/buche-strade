@@ -141,7 +141,7 @@ export default function App() {
   if (session === undefined) return (
     <div style={{ minHeight: '100dvh', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
       <style>{STYLES}</style>
-      <div style={{ fontSize: 48 }}>🕳️</div>
+      <img src="/logo.png" style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover" }} alt="logo" />
       <div style={{ color: '#64748b', fontSize: 15 }}>Caricamento...</div>
     </div>
   )
@@ -169,7 +169,7 @@ export default function App() {
         {/* Top header */}
         <header style={{ background: '#0f172a', borderBottom: '1px solid #1e293b', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, position: 'sticky', top: 0, zIndex: 900, flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 28, height: 28, background: 'linear-gradient(135deg,#3b82f6,#06b6d4)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>🕳️</div>
+            <img src="/logo.png" style={{ width: 28, height: 28, borderRadius: 7, objectFit: "cover" }} alt="logo" />
             <span style={{ color: 'white', fontWeight: 700, fontSize: 17 }}>Buche<span style={{ color: '#3b82f6' }}>Strade</span></span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -247,7 +247,7 @@ function AuthPage({ showToast }) {
     <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ width: 68, height: 68, background: 'linear-gradient(135deg,#3b82f6,#06b6d4)', borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, margin: '0 auto 16px' }}>🕳️</div>
+          <img src="/logo.png" style={{ width: 68, height: 68, borderRadius: 18, objectFit: "cover", margin: "0 auto 16px", display: "block" }} alt="logo" />
           <h1 style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>Buche<span style={{ color: '#3b82f6' }}>Strade</span></h1>
           <p style={{ color: '#64748b', fontSize: 15, marginTop: 6 }}>Segnala le buche del tuo comune</p>
         </div>
