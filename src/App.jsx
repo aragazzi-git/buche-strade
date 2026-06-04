@@ -500,6 +500,8 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
       if (markerRef2.current) map.removeLayer(markerRef2.current)
       markerRef2.current = L.marker([lat, lng]).addTo(map)
       await reverseGeocode(lat, lng)
+      // Controllo duplicati in tempo reale al click sulla mappa
+      setDupAlert(checkDuplicatiPos({ lat, lng }))
     })
   }, [step])
 
@@ -525,15 +527,30 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
         map.setView([lat, lng], 16)
       }
       await reverseGeocode(lat, lng)
+      // Controllo duplicati in tempo reale via GPS
+      setDupAlert(checkDuplicatiPos({ lat, lng }))
       setLoading(false)
     }, () => { showToast('Impossibile ottenere la posizione GPS', 'error'); setLoading(false) })
   }
 
-  const checkDuplicati = (pos) => {
+  // Funzione riutilizzabile con pos esplicita (usata anche da map click e GPS in tempo reale)
+  const checkDuplicatiPos = (pos) => {
     if (!pos) return null
-    const R = 0.00045
-    return segnalazioni.find(s => Math.abs(s.lat - pos.lat) < R && Math.abs(s.lng - pos.lng) < R)
+    const toRad = deg => deg * Math.PI / 180
+    const distanza = (s) => {
+      const R = 6371000
+      const dLat = toRad(s.lat - pos.lat)
+      const dLng = toRad(s.lng - pos.lng)
+      const a = Math.sin(dLat/2)**2 + Math.cos(toRad(pos.lat)) * Math.cos(toRad(s.lat)) * Math.sin(dLng/2)**2
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+    }
+    return segnalazioni.find(s =>
+      s.stato !== 'risolta' &&
+      s.stato !== 'rifiutata' &&
+      distanza(s) <= 50
+    )
   }
+  const checkDuplicati = (pos) => checkDuplicatiPos(pos)
 
   const analyzeWithAI = async () => {
     if (!foto) return { valid: true, result: { valida: true, messaggio: 'Nessuna foto — validazione manuale richiesta' } }
