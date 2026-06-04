@@ -14,8 +14,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 })
 
-// ── CONSTANTS ────────────────────────────────────────────────
-
 const PERICOLOSITA_CONFIG = {
   bassa:   { color: '#22c55e', bg: '#dcfce7', text: '#15803d', label: 'Bassa' },
   media:   { color: '#eab308', bg: '#fef9c3', text: '#854d0e', label: 'Media' },
@@ -29,44 +27,56 @@ const STATO_CONFIG = {
   rifiutata:      { bg: '#f3f4f6', text: '#374151', label: 'Rifiutata' },
 }
 
-// ── AUTH CONTEXT ─────────────────────────────────────────────
-
 const AuthContext = createContext(null)
 const useAuth = () => useContext(AuthContext)
-
-// ── GLOBAL STYLES ────────────────────────────────────────────
 
 const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans','Segoe UI',sans-serif;background:#0f172a}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#1e293b}::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+html,body,#root{height:100%;max-width:100vw;overflow-x:hidden}
+body{font-family:'DM Sans','Segoe UI',sans-serif;background:#0f172a;-webkit-tap-highlight-color:transparent}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#1e293b}::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:none}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(59,130,246,0.3)}50%{box-shadow:0 0 0 8px rgba(59,130,246,0.1)}}
-.fade-in{animation:fadeIn .2s ease}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(59,130,246,0.35)}50%{box-shadow:0 0 0 9px rgba(59,130,246,0.08)}}
+.fade-in{animation:fadeIn .22s ease}
+.slide-up{animation:slideUp .28s cubic-bezier(.4,0,.2,1)}
 .spin{animation:spin 1s linear infinite;display:inline-block}
-.btn-p{background:#3b82f6;color:#fff;border:none;padding:11px 20px;border-radius:9px;cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;transition:all .15s;width:100%}
-.btn-p:hover:not(:disabled){background:#2563eb}
-.btn-p:disabled{background:#334155;color:#64748b;cursor:default}
-.btn-g{background:transparent;color:#94a3b8;border:1px solid #334155;padding:10px 18px;border-radius:9px;cursor:pointer;font-weight:500;font-size:14px;font-family:inherit;transition:all .15s;width:100%}
-.btn-g:hover{background:#1e293b;color:#e2e8f0}
-.btn-danger{background:#7f1d1d;color:#fca5a5;border:none;padding:10px 18px;border-radius:9px;cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;width:100%}
-.btn-danger:hover{background:#991b1b}
-input[type=text],input[type=email],input[type=password],input[type=number],textarea,select{background:#1e293b;border:1px solid #334155;color:#e2e8f0;padding:10px 14px;border-radius:8px;width:100%;font-size:14px;outline:none;transition:border .15s;font-family:inherit}
+
+/* Bottoni touch-friendly (min 44px tap target) */
+.btn-p{background:#3b82f6;color:#fff;border:none;padding:14px 20px;border-radius:12px;cursor:pointer;font-weight:600;font-size:15px;font-family:inherit;transition:all .15s;width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
+.btn-p:active{background:#1d4ed8;transform:scale(0.98)}
+.btn-p:disabled{background:#334155;color:#64748b;cursor:default;transform:none}
+.btn-g{background:#1e293b;color:#94a3b8;border:1px solid #334155;padding:13px 18px;border-radius:12px;cursor:pointer;font-weight:500;font-size:15px;font-family:inherit;transition:all .15s;width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
+.btn-g:active{background:#0f172a;color:#e2e8f0}
+.btn-sm{background:#1e293b;color:#94a3b8;border:1px solid #334155;padding:9px 14px;border-radius:9px;cursor:pointer;font-weight:500;font-size:13px;font-family:inherit;transition:all .15s;min-height:38px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.btn-sm:active{background:#0f172a;color:#e2e8f0}
+
+input[type=text],input[type=email],input[type=password],textarea,select{
+  background:#0f172a;border:1.5px solid #334155;color:#e2e8f0;
+  padding:13px 14px;border-radius:10px;width:100%;font-size:15px;
+  outline:none;transition:border .15s;font-family:inherit;
+  -webkit-appearance:none;min-height:48px
+}
 input:focus,textarea:focus,select:focus{border-color:#3b82f6}
-textarea{resize:vertical;min-height:80px}
+textarea{resize:vertical;min-height:90px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
 select option{background:#1e293b}
+
+/* Bottom tab bar */
+.tab-bar{position:fixed;bottom:0;left:0;right:0;background:#0f172a;border-top:1px solid #1e293b;display:flex;z-index:1000;padding-bottom:env(safe-area-inset-bottom)}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;border:none;background:transparent;cursor:pointer;font-family:inherit;gap:3px;-webkit-tap-highlight-color:transparent;min-height:56px}
+.tab-btn span.tab-icon{font-size:20px;line-height:1}
+.tab-btn span.tab-label{font-size:10px;font-weight:600;letter-spacing:.3px}
 `
 
-// ── SHARED COMPONENTS ────────────────────────────────────────
-
 function Badge({ cfg, children }) {
-  return <span style={{ background: cfg.bg, color: cfg.text, padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>{children}</span>
+  return <span style={{ background: cfg.bg, color: cfg.text, padding: '4px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{children}</span>
 }
 
 function Spinner() {
-  return <span className="spin" style={{ fontSize: 18 }}>⟳</span>
+  return <span className="spin" style={{ fontSize: 16 }}>⟳</span>
 }
 
 function Toast({ toast }) {
@@ -74,20 +84,18 @@ function Toast({ toast }) {
   const map = { success: ['#065f46', '#10b981'], error: ['#7f1d1d', '#ef4444'], info: ['#1e3a5f', '#3b82f6'] }
   const [bg, border] = map[toast.type] || map.info
   return (
-    <div style={{ position: 'fixed', top: 66, right: 16, zIndex: 9999, background: bg, border: `1px solid ${border}`, color: 'white', padding: '12px 18px', borderRadius: 10, fontSize: 14, fontWeight: 500, maxWidth: 340, animation: 'fadeIn .2s ease', lineHeight: 1.4 }}>
+    <div style={{ position: 'fixed', top: 16, left: 16, right: 16, zIndex: 9999, background: bg, border: `1px solid ${border}`, color: 'white', padding: '14px 18px', borderRadius: 12, fontSize: 14, fontWeight: 500, animation: 'fadeIn .2s ease', lineHeight: 1.5, boxShadow: '0 4px 24px rgba(0,0,0,.4)' }}>
       {toast.msg}
     </div>
   )
 }
 
 function Card({ children, style }) {
-  return <div style={{ background: '#1e293b', borderRadius: 16, padding: 24, border: '1px solid #334155', ...style }}>{children}</div>
+  return <div style={{ background: '#1e293b', borderRadius: 16, padding: 20, border: '1px solid #334155', ...style }}>{children}</div>
 }
 
-// ── ROOT APP ─────────────────────────────────────────────────
-
 export default function App() {
-  const [session, setSession] = useState(undefined) // undefined = loading
+  const [session, setSession] = useState(undefined)
   const [profile, setProfile] = useState(null)
   const [page, setPage] = useState('mappa')
   const [segnalazioni, setSegnalazioni] = useState([])
@@ -99,124 +107,99 @@ export default function App() {
     setTimeout(() => setToast(null), 4000)
   }
 
-  // Auth listener
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setSession(session)
-    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setSession(session))
     return () => subscription.unsubscribe()
   }, [])
 
-  // Load profile when session changes
   useEffect(() => {
     if (!session) { setProfile(null); return }
     getProfile(session.user.id).then(setProfile).catch(console.error)
   }, [session])
 
-  // Load segnalazioni
   const loadSegnalazioni = async () => {
     setLoadingSeg(true)
-    try {
-      const data = await getSegnalazioni()
-      setSegnalazioni(data || [])
-    } catch (e) {
-      showToast('Errore nel caricamento segnalazioni', 'error')
-    } finally {
-      setLoadingSeg(false)
-    }
+    try { setSegnalazioni((await getSegnalazioni()) || []) }
+    catch { showToast('Errore nel caricamento', 'error') }
+    finally { setLoadingSeg(false) }
   }
 
-  useEffect(() => {
-    if (session) loadSegnalazioni()
-  }, [session])
+  useEffect(() => { if (session) loadSegnalazioni() }, [session])
 
-  // Real-time updates
   useEffect(() => {
     if (!session) return
-    const channel = supabase
-      .channel('segnalazioni-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'segnalazioni' }, () => loadSegnalazioni())
+    const ch = supabase.channel('seg-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'segnalazioni' }, loadSegnalazioni)
       .subscribe()
-    return () => supabase.removeChannel(channel)
+    return () => supabase.removeChannel(ch)
   }, [session])
 
-  const handleLogout = async () => {
-    await signOut()
-    setPage('mappa')
-    setSegnalazioni([])
-  }
-
+  const handleLogout = async () => { await signOut(); setPage('mappa'); setSegnalazioni([]) }
   const isAdmin = profile?.role === 'admin' || profile?.role === 'supervisor'
 
-  // Loading state
-  if (session === undefined) {
-    return (
-      <div style={{ minHeight: '100dvh', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
-        <style>{STYLES}</style>
-        <div style={{ fontSize: 40 }}>🕳️</div>
-        <div style={{ color: '#64748b', fontSize: 15 }}>Caricamento...</div>
-      </div>
-    )
-  }
+  if (session === undefined) return (
+    <div style={{ minHeight: '100dvh', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
+      <style>{STYLES}</style>
+      <div style={{ fontSize: 48 }}>🕳️</div>
+      <div style={{ color: '#64748b', fontSize: 15 }}>Caricamento...</div>
+    </div>
+  )
 
-  // Not logged in → show auth page
-  if (!session) {
-    return (
-      <>
-        <style>{STYLES}</style>
-        <AuthPage onSuccess={() => {}} showToast={showToast} />
-        <Toast toast={toast} />
-      </>
-    )
-  }
+  if (!session) return (
+    <>
+      <style>{STYLES}</style>
+      <AuthPage showToast={showToast} />
+      <Toast toast={toast} />
+    </>
+  )
+
+  const TABS = [
+    { id: 'mappa',     icon: '🗺️',  label: 'Mappa' },
+    { id: 'segnala',   icon: '📍',  label: 'Segnala' },
+    ...(isAdmin ? [{ id: 'dashboard', icon: '⚙️', label: 'Admin' }] : []),
+    { id: 'profilo',   icon: '👤',  label: 'Profilo' },
+  ]
 
   return (
     <AuthContext.Provider value={{ session, profile, isAdmin }}>
       <style>{STYLES}</style>
-      <div style={{ minHeight: '100dvh', background: '#0f172a', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ minHeight: '100dvh', background: '#0f172a', display: 'flex', flexDirection: 'column', paddingBottom: 'calc(56px + env(safe-area-inset-bottom))' }}>
 
-        {/* NAVBAR */}
-        <nav style={{ background: '#0f172a', borderBottom: '1px solid #1e293b', padding: '0 16px', display: 'flex', alignItems: 'center', gap: 6, height: 54, position: 'sticky', top: 0, zIndex: 1000 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8 }}>
-            <div style={{ width: 30, height: 30, background: 'linear-gradient(135deg,#3b82f6,#06b6d4)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>🕳️</div>
-            <span style={{ color: 'white', fontWeight: 700, fontSize: 16 }}>Buche<span style={{ color: '#3b82f6' }}>Strade</span></span>
+        {/* Top header */}
+        <header style={{ background: '#0f172a', borderBottom: '1px solid #1e293b', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, position: 'sticky', top: 0, zIndex: 900, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 28, height: 28, background: 'linear-gradient(135deg,#3b82f6,#06b6d4)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>🕳️</div>
+            <span style={{ color: 'white', fontWeight: 700, fontSize: 17 }}>Buche<span style={{ color: '#3b82f6' }}>Strade</span></span>
           </div>
-          <div style={{ display: 'flex', gap: 2, flex: 1 }}>
-            {[
-              { id: 'mappa', label: '🗺️ Mappa' },
-              { id: 'segnala', label: '📍 Segnala' },
-              ...(isAdmin ? [{ id: 'dashboard', label: '⚙️ Admin' }] : [])
-            ].map(tab => (
-              <button key={tab.id} onClick={() => setPage(tab.id)}
-                style={{ background: page === tab.id ? '#1e293b' : 'transparent', border: 'none', color: page === tab.id ? '#3b82f6' : '#64748b', padding: '6px 10px', borderRadius: 7, cursor: 'pointer', fontWeight: page === tab.id ? 600 : 400, fontSize: 13, fontFamily: 'inherit', transition: 'all .15s', whiteSpace: 'nowrap' }}>
-                {tab.label}
-              </button>
-            ))}
-          </div>
-          {/* User info */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#1e293b', borderRadius: 8, padding: '5px 10px' }}>
-              <div style={{ width: 24, height: 24, borderRadius: '50%', background: isAdmin ? '#7c3aed' : '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: 'white', fontWeight: 700 }}>
-                {(profile?.nome || session.user.email || '?')[0].toUpperCase()}
-              </div>
-              <span style={{ color: '#94a3b8', fontSize: 12, display: 'none' }} className="md-show">
-                {isAdmin ? '👑 ' : ''}{profile?.role || 'user'}
-              </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {isAdmin && <span style={{ background: '#4c1d95', color: '#c4b5fd', fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 6 }}>👑 ADMIN</span>}
+            <div style={{ width: 30, height: 30, borderRadius: '50%', background: isAdmin ? '#7c3aed' : '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'white', fontWeight: 700 }}>
+              {(profile?.nome || session.user.email || '?')[0].toUpperCase()}
             </div>
-            <button onClick={handleLogout} style={{ background: 'none', border: '1px solid #334155', color: '#64748b', padding: '5px 10px', borderRadius: 7, cursor: 'pointer', fontSize: 12, fontFamily: 'inherit' }}>
-              Esci
-            </button>
           </div>
-        </nav>
+        </header>
 
         <Toast toast={toast} />
 
+        {/* Page content */}
         <div style={{ flex: 1 }}>
-          {page === 'mappa' && <MappaPage segnalazioni={segnalazioni} loading={loadingSeg} />}
-          {page === 'segnala' && <SegnalaPage segnalazioni={segnalazioni} onSubmit={async (s) => { setSegnalazioni(prev => [s, ...prev]) }} showToast={showToast} setPage={setPage} />}
-          {page === 'dashboard' && isAdmin && <DashboardPage segnalazioni={segnalazioni} onUpdate={(id, updates) => setSegnalazioni(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s))} showToast={showToast} />}
+          {page === 'mappa'     && <MappaPage segnalazioni={segnalazioni} loading={loadingSeg} />}
+          {page === 'segnala'   && <SegnalaPage segnalazioni={segnalazioni} onSubmit={s => setSegnalazioni(p => [s, ...p])} showToast={showToast} setPage={setPage} />}
+          {page === 'dashboard' && isAdmin && <DashboardPage segnalazioni={segnalazioni} onUpdate={(id, u) => setSegnalazioni(p => p.map(s => s.id === id ? { ...s, ...u } : s))} showToast={showToast} />}
+          {page === 'profilo'   && <ProfiloPage profile={profile} session={session} onLogout={handleLogout} />}
         </div>
+
+        {/* Bottom tab bar */}
+        <nav className="tab-bar">
+          {TABS.map(tab => (
+            <button key={tab.id} className="tab-btn" onClick={() => setPage(tab.id)}>
+              <span className="tab-icon">{tab.icon}</span>
+              <span className="tab-label" style={{ color: page === tab.id ? '#3b82f6' : '#475569' }}>{tab.label}</span>
+              {page === tab.id && <div style={{ width: 20, height: 3, background: '#3b82f6', borderRadius: 2, marginTop: 1 }} />}
+            </button>
+          ))}
+        </nav>
       </div>
     </AuthContext.Provider>
   )
@@ -225,7 +208,7 @@ export default function App() {
 // ── AUTH PAGE ────────────────────────────────────────────────
 
 function AuthPage({ showToast }) {
-  const [mode, setMode] = useState('login') // login | signup
+  const [mode, setMode] = useState('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [nome, setNome] = useState('')
@@ -236,92 +219,110 @@ function AuthPage({ showToast }) {
     if (!email || !password) { showToast('Compila email e password', 'error'); return }
     setLoading(true)
     try {
-      if (mode === 'login') {
-        await signInWithEmail(email, password)
-      } else {
-        await signUpWithEmail(email, password, nome)
-        setDone(true)
-      }
+      if (mode === 'login') { await signInWithEmail(email, password) }
+      else { await signUpWithEmail(email, password, nome); setDone(true) }
     } catch (e) {
-      showToast(translateError(e.message), 'error')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const translateError = (msg) => {
-    if (msg.includes('Invalid login')) return 'Email o password errati'
-    if (msg.includes('already registered')) return 'Email già registrata — prova ad accedere'
-    if (msg.includes('Password should be')) return 'La password deve avere almeno 6 caratteri'
-    if (msg.includes('Unable to validate')) return 'Email non valida'
-    return msg
+      const m = e.message
+      showToast(
+        m.includes('Invalid login') ? 'Email o password errati' :
+        m.includes('already registered') ? 'Email già registrata' :
+        m.includes('Password should be') ? 'Password min. 6 caratteri' : m,
+        'error'
+      )
+    } finally { setLoading(false) }
   }
 
   if (done) return (
     <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <Card style={{ maxWidth: 400, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>📧</div>
+      <Card style={{ maxWidth: 420, width: '100%', textAlign: 'center' }}>
+        <div style={{ fontSize: 52, marginBottom: 16 }}>📧</div>
         <h2 style={{ color: '#e2e8f0', fontSize: 20, fontWeight: 700, marginBottom: 10 }}>Controlla la tua email</h2>
-        <p style={{ color: '#94a3b8', fontSize: 14, lineHeight: 1.6 }}>Abbiamo inviato un link di conferma a <strong style={{ color: '#e2e8f0' }}>{email}</strong>. Clicca il link per attivare il tuo account.</p>
-        <button className="btn-g" style={{ marginTop: 20 }} onClick={() => { setDone(false); setMode('login') }}>← Vai al login</button>
+        <p style={{ color: '#94a3b8', fontSize: 15, lineHeight: 1.7 }}>Abbiamo inviato un link a <strong style={{ color: '#e2e8f0' }}>{email}</strong>. Clicca il link per attivare l'account.</p>
+        <button className="btn-g" style={{ marginTop: 24 }} onClick={() => { setDone(false); setMode('login') }}>← Torna al login</button>
       </Card>
     </div>
   )
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <div style={{ width: '100%', maxWidth: 400 }}>
-        {/* Logo */}
+    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ width: '100%', maxWidth: 420 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ width: 60, height: 60, background: 'linear-gradient(135deg,#3b82f6,#06b6d4)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, margin: '0 auto 16px' }}>🕳️</div>
-          <h1 style={{ color: 'white', fontSize: 26, fontWeight: 700 }}>Buche<span style={{ color: '#3b82f6' }}>Strade</span></h1>
-          <p style={{ color: '#64748b', fontSize: 14, marginTop: 4 }}>Segnala le buche del tuo comune</p>
+          <div style={{ width: 68, height: 68, background: 'linear-gradient(135deg,#3b82f6,#06b6d4)', borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, margin: '0 auto 16px' }}>🕳️</div>
+          <h1 style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>Buche<span style={{ color: '#3b82f6' }}>Strade</span></h1>
+          <p style={{ color: '#64748b', fontSize: 15, marginTop: 6 }}>Segnala le buche del tuo comune</p>
         </div>
-
         <Card>
-          {/* Tabs */}
-          <div style={{ display: 'flex', background: '#0f172a', borderRadius: 10, padding: 4, marginBottom: 24 }}>
-            {[['login', 'Accedi'], ['signup', 'Registrati']].map(([m, l]) => (
-              <button key={m} onClick={() => setMode(m)} style={{ flex: 1, padding: '8px 0', background: mode === m ? '#1e293b' : 'transparent', border: 'none', color: mode === m ? '#e2e8f0' : '#64748b', borderRadius: 8, cursor: 'pointer', fontWeight: mode === m ? 600 : 400, fontSize: 14, fontFamily: 'inherit', transition: 'all .15s' }}>{l}</button>
+          <div style={{ display: 'flex', background: '#0f172a', borderRadius: 12, padding: 4, marginBottom: 24 }}>
+            {[['login','Accedi'],['signup','Registrati']].map(([m,l]) => (
+              <button key={m} onClick={() => setMode(m)} style={{ flex: 1, padding: '10px 0', background: mode === m ? '#1e293b' : 'transparent', border: 'none', color: mode === m ? '#e2e8f0' : '#64748b', borderRadius: 9, cursor: 'pointer', fontWeight: mode === m ? 600 : 400, fontSize: 15, fontFamily: 'inherit', transition: 'all .15s', minHeight: 44 }}>{l}</button>
             ))}
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {mode === 'signup' && (
               <div>
-                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 6 }}>Nome</label>
+                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 7 }}>Nome</label>
                 <input type="text" value={nome} onChange={e => setNome(e.target.value)} placeholder="Mario Rossi" />
               </div>
             )}
             <div>
-              <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 6 }}>Email</label>
+              <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 7 }}>Email</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="mario@esempio.it" onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
             </div>
             <div>
-              <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 6 }}>Password</label>
+              <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 7 }}>Password</label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
             </div>
-
             <button className="btn-p" onClick={handleSubmit} disabled={loading} style={{ marginTop: 4 }}>
               {loading ? <Spinner /> : mode === 'login' ? 'Accedi' : 'Crea account'}
             </button>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '4px 0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ flex: 1, height: 1, background: '#334155' }} />
-              <span style={{ color: '#475569', fontSize: 12 }}>oppure</span>
+              <span style={{ color: '#475569', fontSize: 13 }}>oppure</span>
               <div style={{ flex: 1, height: 1, background: '#334155' }} />
             </div>
-
             <button className="btn-g" onClick={async () => { try { await signInWithGoogle() } catch (e) { showToast(e.message, 'error') } }}>
-              <span style={{ marginRight: 8 }}>🔵</span> Continua con Google
+              <span>🔵</span> Continua con Google
             </button>
           </div>
         </Card>
-
-        <p style={{ color: '#475569', fontSize: 12, textAlign: 'center', marginTop: 20, lineHeight: 1.5 }}>
-          Accedendo accetti i termini di servizio.<br />I tuoi dati sono protetti e usati solo per gestire le segnalazioni.
-        </p>
       </div>
+    </div>
+  )
+}
+
+// ── PROFILO PAGE ─────────────────────────────────────────────
+
+function ProfiloPage({ profile, session, onLogout }) {
+  return (
+    <div style={{ padding: '24px 16px', maxWidth: 480, margin: '0 auto' }}>
+      <h1 style={{ color: '#e2e8f0', fontSize: 20, fontWeight: 700, marginBottom: 20 }}>Il mio profilo</h1>
+      <Card style={{ marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg,#3b82f6,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: 'white', fontWeight: 700, flexShrink: 0 }}>
+            {(profile?.nome || session.user.email || '?')[0].toUpperCase()}
+          </div>
+          <div>
+            <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 17 }}>{profile?.nome || 'Utente'}</div>
+            <div style={{ color: '#64748b', fontSize: 14, marginTop: 2 }}>{session.user.email}</div>
+          </div>
+        </div>
+        <div style={{ background: '#0f172a', borderRadius: 10, padding: 14 }}>
+          <div style={{ color: '#64748b', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 10 }}>Dettagli account</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+            <span style={{ color: '#64748b', fontSize: 14 }}>Ruolo</span>
+            <span style={{ background: profile?.role === 'admin' ? '#4c1d95' : profile?.role === 'supervisor' ? '#1e3a5f' : '#1e293b', color: profile?.role === 'admin' ? '#c4b5fd' : profile?.role === 'supervisor' ? '#7dd3fc' : '#94a3b8', padding: '2px 10px', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
+              {profile?.role === 'admin' ? '👑 Admin' : profile?.role === 'supervisor' ? '🔷 Supervisor' : '👤 Utente'}
+            </span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#64748b', fontSize: 14 }}>Membro dal</span>
+            <span style={{ color: '#94a3b8', fontSize: 14 }}>{profile?.created_at ? new Date(profile.created_at).toLocaleDateString('it-IT') : '—'}</span>
+          </div>
+        </div>
+      </Card>
+      <button className="btn-g" onClick={onLogout} style={{ borderColor: '#7f1d1d', color: '#fca5a5' }}>
+        🚪 Esci dall'account
+      </button>
     </div>
   )
 }
@@ -333,11 +334,13 @@ function MappaPage({ segnalazioni, loading }) {
   const [filtroStato, setFiltroStato] = useState('tutti')
   const [filtroPerc, setFiltroPerc] = useState('tutti')
   const [selected, setSelected] = useState(null)
+  const [showFiltri, setShowFiltri] = useState(false)
+  const [gpsLoading, setGpsLoading] = useState(false)
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)
   const markersRef = useRef([])
   const userMarkerRef = useRef(null)
-  const [gpsLoading, setGpsLoading] = useState(false)
+  const centeredRef = useRef(false)
 
   const visible = segnalazioni.filter(s =>
     (isAdmin || (s.foto_validata && s.stato !== 'rifiutata')) &&
@@ -352,15 +355,16 @@ function MappaPage({ segnalazioni, loading }) {
     risolte: segnalazioni.filter(s => s.stato === 'risolta').length,
   }
 
-  const centeredRef = useRef(false)
+  const filtriAttivi = (filtroStato !== 'tutti' ? 1 : 0) + (filtroPerc !== 'tutti' ? 1 : 0)
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
-    // Vista iniziale sull'Italia, verrà aggiornata dai marker reali
-    const map = L.map(mapRef.current).setView([41.9028, 12.4964], 6)
+    const map = L.map(mapRef.current, { zoomControl: false }).setView([41.9028, 12.4964], 6)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>'
+      attribution: '© <a href="https://openstreetmap.org">OSM</a>'
     }).addTo(map)
+    // Zoom control in alto a destra
+    L.control.zoom({ position: 'topright' }).addTo(map)
     mapInstanceRef.current = map
   }, [])
 
@@ -372,18 +376,16 @@ function MappaPage({ segnalazioni, loading }) {
     visible.forEach(s => {
       const cfg = PERICOLOSITA_CONFIG[s.pericolosita]
       const icon = L.divIcon({
-        html: `<div style="width:22px;height:22px;border-radius:50%;background:${cfg.color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.5);cursor:pointer"></div>`,
-        className: '', iconSize: [22, 22], iconAnchor: [11, 11]
+        html: `<div style="width:24px;height:24px;border-radius:50%;background:${cfg.color};border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,.5);cursor:pointer"></div>`,
+        className: '', iconSize: [24, 24], iconAnchor: [12, 12]
       })
       const marker = L.marker([s.lat, s.lng], { icon }).addTo(map)
       marker.on('click', () => setSelected(s))
       markersRef.current.push(marker)
     })
-    // Prima volta che arrivano i dati: centra la mappa su tutti i marker
     if (!centeredRef.current && markersRef.current.length > 0) {
       centeredRef.current = true
-      const group = L.featureGroup(markersRef.current)
-      map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 15 })
+      map.fitBounds(L.featureGroup(markersRef.current).getBounds(), { padding: [50, 50], maxZoom: 15 })
     }
   }, [visible])
 
@@ -393,102 +395,124 @@ function MappaPage({ segnalazioni, loading }) {
     navigator.geolocation.getCurrentPosition(({ coords: { latitude: lat, longitude: lng } }) => {
       const map = mapInstanceRef.current
       if (!map) return
-      // Rimuovi marker utente precedente
       if (userMarkerRef.current) map.removeLayer(userMarkerRef.current)
-      // Crea marker blu pulsante per la posizione utente
       const icon = L.divIcon({
-        html: `<div style="width:18px;height:18px;border-radius:50%;background:#3b82f6;border:3px solid white;box-shadow:0 0 0 4px rgba(59,130,246,0.3);animation:pulse 1.5s infinite"></div>`,
-        className: '', iconSize: [18, 18], iconAnchor: [9, 9]
+        html: `<div style="width:20px;height:20px;border-radius:50%;background:#3b82f6;border:3px solid white;box-shadow:0 0 0 5px rgba(59,130,246,0.3);animation:pulse 1.5s infinite"></div>`,
+        className: '', iconSize: [20, 20], iconAnchor: [10, 10]
       })
-      userMarkerRef.current = L.marker([lat, lng], { icon })
-        .addTo(map)
-        .bindPopup('<div style="color:#1e293b;font-weight:600;font-size:13px">📍 La tua posizione</div>')
-        .openPopup()
+      userMarkerRef.current = L.marker([lat, lng], { icon }).addTo(map)
+        .bindPopup('<b style="color:#1e293b">📍 Sei qui</b>').openPopup()
       map.setView([lat, lng], 15)
       setGpsLoading(false)
     }, () => setGpsLoading(false))
   }
 
   return (
-    <div style={{ height: 'calc(100dvh - 54px)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-      {/* Stats */}
-      <div style={{ background: '#0f172a', borderBottom: '1px solid #1e293b', padding: '10px 16px', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
+    <div style={{ height: 'calc(100dvh - 52px - 56px - env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+
+      {/* Stats strip — scrollabile orizzontalmente su mobile */}
+      <div style={{ background: '#0f172a', borderBottom: '1px solid #1e293b', padding: '10px 12px', display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         {loading ? (
-          <div style={{ color: '#64748b', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}><Spinner /> Caricamento...</div>
+          <div style={{ color: '#64748b', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}><Spinner /> Caricamento segnalazioni...</div>
         ) : (
           <>
             {[
-              { label: 'Totale', val: stats.totale, color: '#3b82f6' },
+              { label: 'Totale',   val: stats.totale,   color: '#3b82f6' },
               { label: 'Critiche', val: stats.critiche, color: '#ef4444' },
-              { label: 'Alte', val: stats.alte, color: '#f97316' },
-              { label: 'Risolte', val: stats.risolte, color: '#22c55e' },
+              { label: 'Alte',     val: stats.alte,     color: '#f97316' },
+              { label: 'Risolte',  val: stats.risolte,  color: '#22c55e' },
             ].map(s => (
-              <div key={s.label} style={{ background: '#1e293b', borderRadius: 8, padding: '6px 14px', display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div key={s.label} style={{ background: '#1e293b', borderRadius: 8, padding: '6px 12px', display: 'flex', gap: 7, alignItems: 'center', flexShrink: 0 }}>
                 <span style={{ color: s.color, fontWeight: 700, fontSize: 18 }}>{s.val}</span>
                 <span style={{ color: '#64748b', fontSize: 12 }}>{s.label}</span>
               </div>
             ))}
-            <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-              <select value={filtroStato} onChange={e => setFiltroStato(e.target.value)} style={{ width: 'auto', padding: '7px 10px', fontSize: 12 }}>
-                <option value="tutti">Tutti gli stati</option>
-                {Object.entries(STATO_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-              </select>
-              <select value={filtroPerc} onChange={e => setFiltroPerc(e.target.value)} style={{ width: 'auto', padding: '7px 10px', fontSize: 12 }}>
-                <option value="tutti">Tutti i livelli</option>
-                {Object.entries(PERICOLOSITA_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-              </select>
-            </div>
+            {/* Pulsante filtri */}
+            <button onClick={() => setShowFiltri(true)} className="btn-sm" style={{ marginLeft: 'auto', flexShrink: 0, background: filtriAttivi > 0 ? '#1e3a5f' : '#1e293b', color: filtriAttivi > 0 ? '#7dd3fc' : '#94a3b8', borderColor: filtriAttivi > 0 ? '#3b82f6' : '#334155' }}>
+              🔧 Filtri {filtriAttivi > 0 && <span style={{ background: '#3b82f6', color: 'white', borderRadius: '50%', width: 18, height: 18, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700 }}>{filtriAttivi}</span>}
+            </button>
           </>
         )}
       </div>
 
+      {/* Pulsante posizione — overlay sulla mappa */}
+      <div style={{ position: 'absolute', bottom: 16, right: 12, zIndex: 500, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <button onClick={handleMyLocation} disabled={gpsLoading}
+          style={{ background: 'rgba(15,23,42,.92)', backdropFilter: 'blur(8px)', border: '1px solid #334155', color: gpsLoading ? '#64748b' : '#3b82f6', borderRadius: 12, padding: '10px 14px', cursor: gpsLoading ? 'default' : 'pointer', fontFamily: 'inherit', fontWeight: 600, fontSize: 13, display: 'flex', alignItems: 'center', gap: 7, boxShadow: '0 4px 16px rgba(0,0,0,.4)', minHeight: 44, whiteSpace: 'nowrap' }}>
+          {gpsLoading ? <><Spinner /> Ricerca...</> : <>📍 La mia posizione</>}
+        </button>
+      </div>
+
       {/* Legenda */}
-      <div style={{ position: 'absolute', bottom: 24, left: 12, zIndex: 500, background: 'rgba(15,23,42,.92)', border: '1px solid #334155', borderRadius: 10, padding: '10px 14px' }}>
-        <div style={{ color: '#64748b', fontSize: 10, fontWeight: 700, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px' }}>Pericolosità</div>
+      <div style={{ position: 'absolute', bottom: 16, left: 12, zIndex: 500, background: 'rgba(15,23,42,.92)', backdropFilter: 'blur(8px)', border: '1px solid #334155', borderRadius: 10, padding: '10px 12px' }}>
         {Object.entries(PERICOLOSITA_CONFIG).map(([k, v]) => (
           <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 3 }}>
-            <div style={{ width: 11, height: 11, borderRadius: '50%', background: v.color }} />
+            <div style={{ width: 11, height: 11, borderRadius: '50%', background: v.color, flexShrink: 0 }} />
             <span style={{ color: '#e2e8f0', fontSize: 12 }}>{v.label}</span>
           </div>
         ))}
       </div>
 
-      {/* Bottone posizione utente */}
-      <div style={{ position: 'absolute', top: 70, right: 12, zIndex: 500 }}>
-        <button onClick={handleMyLocation} disabled={gpsLoading}
-          style={{ background: gpsLoading ? '#1e293b' : '#0f172a', border: '1px solid #334155', color: gpsLoading ? '#64748b' : '#3b82f6', borderRadius: 10, padding: '8px 14px', cursor: gpsLoading ? 'default' : 'pointer', fontFamily: 'inherit', fontWeight: 600, fontSize: 13, display: 'flex', alignItems: 'center', gap: 7, boxShadow: '0 2px 12px rgba(0,0,0,.4)', transition: 'all .15s', backdropFilter: 'blur(8px)' }}>
-          {gpsLoading ? <><span className="spin" style={{fontSize:14}}>⟳</span> Ricerca...</> : <>📍 La mia posizione</>}
-        </button>
-      </div>
-
       <div ref={mapRef} style={{ flex: 1 }} />
 
-      {/* Dettaglio modal */}
+      {/* Filtri — bottom sheet */}
+      {showFiltri && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(0,0,0,.6)' }} onClick={() => setShowFiltri(false)}>
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#1e293b', borderRadius: '20px 20px 0 0', padding: '20px 20px calc(20px + env(safe-area-inset-bottom))', border: '1px solid #334155' }} className="slide-up" onClick={e => e.stopPropagation()}>
+            <div style={{ width: 40, height: 4, background: '#334155', borderRadius: 2, margin: '0 auto 20px' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h3 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 700 }}>Filtri mappa</h3>
+              {filtriAttivi > 0 && <button onClick={() => { setFiltroStato('tutti'); setFiltroPerc('tutti') }} style={{ background: 'none', border: 'none', color: '#3b82f6', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>Azzera filtri</button>}
+            </div>
+            <div style={{ display: 'grid', gap: 14 }}>
+              <div>
+                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 8 }}>Stato segnalazione</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {[['tutti','Tutti'],['segnalata','Segnalata'],['in_lavorazione','In lavoro'],['risolta','Risolta']].map(([v,l]) => (
+                    <button key={v} onClick={() => setFiltroStato(v)} style={{ padding: '11px 10px', borderRadius: 10, border: `2px solid ${filtroStato === v ? '#3b82f6' : '#334155'}`, background: filtroStato === v ? '#1e3a5f' : '#0f172a', color: filtroStato === v ? '#7dd3fc' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}>{l}</button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 8 }}>Pericolosità</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {[['tutti','Tutte'],['bassa','🟢 Bassa'],['media','🟡 Media'],['alta','🟠 Alta'],['critica','🔴 Critica']].map(([v,l]) => (
+                    <button key={v} onClick={() => setFiltroPerc(v)} style={{ padding: '11px 10px', borderRadius: 10, border: `2px solid ${filtroPerc === v ? PERICOLOSITA_CONFIG[v]?.color || '#3b82f6' : '#334155'}`, background: filtroPerc === v ? '#0f172a' : '#0f172a', color: filtroPerc === v ? (PERICOLOSITA_CONFIG[v]?.color || '#3b82f6') : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', minHeight: 44 }}>{l}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <button className="btn-p" style={{ marginTop: 20 }} onClick={() => setShowFiltri(false)}>Applica filtri</button>
+          </div>
+        </div>
+      )}
+
+      {/* Dettaglio buca — bottom sheet */}
       {selected && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 2000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', background: 'rgba(0,0,0,.6)' }} onClick={() => setSelected(null)}>
-          <div style={{ background: '#1e293b', borderRadius: '16px 16px 0 0', padding: 24, width: '100%', maxWidth: 520, border: '1px solid #334155', maxHeight: '70dvh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 2000, display: 'flex', alignItems: 'flex-end', background: 'rgba(0,0,0,.6)' }} onClick={() => setSelected(null)}>
+          <div style={{ background: '#1e293b', borderRadius: '20px 20px 0 0', padding: '20px 20px calc(20px + env(safe-area-inset-bottom))', width: '100%', maxWidth: 540, margin: '0 auto', border: '1px solid #334155', maxHeight: '75dvh', overflowY: 'auto' }} className="slide-up" onClick={e => e.stopPropagation()}>
             <div style={{ width: 40, height: 4, background: '#334155', borderRadius: 2, margin: '0 auto 16px' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
-              <div>
-                <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 15, marginBottom: 3 }}>{selected.address}</div>
-                <div style={{ color: '#64748b', fontSize: 12 }}>{new Date(selected.created_at).toLocaleDateString('it-IT')} · {selected.segnalante_nome || selected.profiles?.nome || 'Utente'}</div>
+              <div style={{ flex: 1, paddingRight: 12 }}>
+                <div style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 15, marginBottom: 4, lineHeight: 1.4 }}>{selected.address}</div>
+                <div style={{ color: '#64748b', fontSize: 13 }}>{new Date(selected.created_at).toLocaleDateString('it-IT')} · {selected.segnalante_nome || selected.profiles?.nome || 'Utente'}</div>
               </div>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 20, padding: 4 }}>✕</button>
+              <button onClick={() => setSelected(null)} style={{ background: '#0f172a', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 18, padding: 8, borderRadius: 8, flexShrink: 0 }}>✕</button>
             </div>
             {selected.foto_url
-              ? <img src={selected.foto_url} alt="Buca" style={{ width: '100%', height: 180, objectFit: 'cover', borderRadius: 10, marginBottom: 14 }} />
-              : <div style={{ width: '100%', height: 100, background: '#0f172a', borderRadius: 10, marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36 }}>🕳️</div>
+              ? <img src={selected.foto_url} alt="Buca" style={{ width: '100%', height: 180, objectFit: 'cover', borderRadius: 12, marginBottom: 14 }} />
+              : <div style={{ width: '100%', height: 100, background: '#0f172a', borderRadius: 12, marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>🕳️</div>
             }
-            <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 7, marginBottom: 14, flexWrap: 'wrap' }}>
               <Badge cfg={PERICOLOSITA_CONFIG[selected.pericolosita]}>⚠️ {PERICOLOSITA_CONFIG[selected.pericolosita].label}</Badge>
               <Badge cfg={STATO_CONFIG[selected.stato]}>{STATO_CONFIG[selected.stato].label}</Badge>
-              {selected.foto_validata && <Badge cfg={{ bg: '#1e1b4b', text: '#818cf8' }}>🤖 AI validata</Badge>}
+              {selected.foto_validata && <Badge cfg={{ bg: '#1e1b4b', text: '#818cf8' }}>🤖 AI</Badge>}
             </div>
-            {selected.descrizione && <p style={{ color: '#94a3b8', fontSize: 14, lineHeight: 1.6, marginBottom: 10 }}>{selected.descrizione}</p>}
+            {selected.descrizione && <p style={{ color: '#94a3b8', fontSize: 14, lineHeight: 1.7, marginBottom: 12 }}>{selected.descrizione}</p>}
             {selected.note_comune && (
-              <div style={{ background: '#0f172a', borderRadius: 8, padding: '10px 14px', borderLeft: '3px solid #3b82f6' }}>
-                <div style={{ color: '#3b82f6', fontSize: 11, fontWeight: 700, marginBottom: 3, textTransform: 'uppercase' }}>Note del Comune</div>
-                <div style={{ color: '#94a3b8', fontSize: 13 }}>{selected.note_comune}</div>
+              <div style={{ background: '#0f172a', borderRadius: 10, padding: '12px 14px', borderLeft: '3px solid #3b82f6' }}>
+                <div style={{ color: '#3b82f6', fontSize: 11, fontWeight: 700, marginBottom: 4, textTransform: 'uppercase' }}>Note del Comune</div>
+                <div style={{ color: '#94a3b8', fontSize: 14, lineHeight: 1.6 }}>{selected.note_comune}</div>
               </div>
             )}
           </div>
@@ -516,7 +540,7 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
   const mapInstanceRef2 = useRef(null)
   const markerRef2 = useRef(null)
 
-  const handleFoto = (e) => {
+  const handleFoto = e => {
     const file = e.target.files[0]
     if (!file) return
     setFoto(file)
@@ -525,7 +549,7 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
 
   useEffect(() => {
     if (step !== 2 || !mapRef2.current || mapInstanceRef2.current) return
-    const map = L.map(mapRef2.current).setView([41.9028, 12.4964], 13)
+    const map = L.map(mapRef2.current, { zoomControl: false }).setView([41.9028, 12.4964], 13)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
     mapInstanceRef2.current = map
     map.on('click', async ({ latlng: { lat, lng } }) => {
@@ -533,19 +557,15 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
       if (markerRef2.current) map.removeLayer(markerRef2.current)
       markerRef2.current = L.marker([lat, lng]).addTo(map)
       await reverseGeocode(lat, lng)
-      // Controllo duplicati in tempo reale al click sulla mappa
       setDupAlert(checkDuplicatiPos({ lat, lng }))
     })
   }, [step])
 
   const reverseGeocode = async (lat, lng) => {
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
-      const data = await res.json()
-      setAddress(data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`)
-    } catch {
-      setAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`)
-    }
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+      setAddress((await r.json()).display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`)
+    } catch { setAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`) }
   }
 
   const handleGPS = () => {
@@ -560,231 +580,193 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
         map.setView([lat, lng], 16)
       }
       await reverseGeocode(lat, lng)
-      // Controllo duplicati in tempo reale via GPS
       setDupAlert(checkDuplicatiPos({ lat, lng }))
       setLoading(false)
-    }, () => { showToast('Impossibile ottenere la posizione GPS', 'error'); setLoading(false) })
+    }, () => { showToast('GPS non disponibile', 'error'); setLoading(false) })
   }
 
-  // Funzione riutilizzabile con pos esplicita (usata anche da map click e GPS in tempo reale)
-  const checkDuplicatiPos = (pos) => {
+  const checkDuplicatiPos = pos => {
     if (!pos) return null
-    const toRad = deg => deg * Math.PI / 180
-    const distanza = (s) => {
-      const R = 6371000
-      const dLat = toRad(s.lat - pos.lat)
-      const dLng = toRad(s.lng - pos.lng)
+    const toRad = d => d * Math.PI / 180
+    const dist = s => {
+      const R = 6371000, dLat = toRad(s.lat - pos.lat), dLng = toRad(s.lng - pos.lng)
       const a = Math.sin(dLat/2)**2 + Math.cos(toRad(pos.lat)) * Math.cos(toRad(s.lat)) * Math.sin(dLng/2)**2
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     }
-    return segnalazioni.find(s =>
-      s.stato !== 'risolta' &&
-      s.stato !== 'rifiutata' &&
-      distanza(s) <= 50
-    )
+    return segnalazioni.find(s => s.stato !== 'risolta' && s.stato !== 'rifiutata' && dist(s) <= 50)
   }
-  const checkDuplicati = (pos) => checkDuplicatiPos(pos)
 
   const analyzeWithAI = async () => {
-    if (!foto) return { valid: true, result: { valida: true, messaggio: 'Nessuna foto — validazione manuale richiesta' } }
+    if (!foto) return { valid: true, result: { valida: true, messaggio: 'Nessuna foto — validazione manuale' } }
     try {
-      const base64 = await new Promise((res, rej) => {
-        const r = new FileReader()
-        r.onload = () => res(r.result.split(',')[1])
-        r.onerror = rej
-        r.readAsDataURL(foto)
-      })
-      const resp = await fetch('/api/analyze-photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64, mediaType: foto.type || 'image/jpeg' })
-      })
-      const parsed = await resp.json()
-      return { valid: parsed.valida && !parsed.contiene_persone, result: parsed }
-    } catch {
-      return { valid: true, result: { valida: true, messaggio: 'Analisi AI non disponibile' } }
-    }
+      const base64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(foto) })
+      const resp = await fetch('/api/analyze-photo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ imageBase64: base64, mediaType: foto.type || 'image/jpeg' }) })
+      const p = await resp.json()
+      return { valid: p.valida && !p.contiene_persone, result: p }
+    } catch { return { valid: true, result: { valida: true, messaggio: 'AI non disponibile' } } }
   }
 
   const handleSubmit = async () => {
     setLoading(true)
     try {
-      // 1. Analisi AI
       const ai = await analyzeWithAI()
       setAiResult(ai)
-      if (!ai.valid) {
-        showToast('❌ Foto non valida: ' + (ai.result?.messaggio || ''), 'error')
-        setLoading(false)
-        return
-      }
-
-      // 2. Upload foto su Supabase Storage
-      let foto_url = null
-      if (foto) {
-        foto_url = await uploadFoto(foto, session.user.id)
-      }
-
-      // 3. Salva segnalazione su Supabase
+      if (!ai.valid) { showToast('❌ ' + (ai.result?.messaggio || 'Foto non valida'), 'error'); setLoading(false); return }
+      const foto_url = foto ? await uploadFoto(foto, session.user.id) : null
       const nuova = await insertSegnalazione({
-        user_id: session.user.id,
-        lat: position.lat,
-        lng: position.lng,
-        address,
-        pericolosita,
-        stato: 'segnalata',
-        descrizione,
-        foto_url,
-        foto_validata: ai.valid,
-        note_comune: '',
-        segnalante_nome: profile?.nome || session.user.email,
+        user_id: session.user.id, lat: position.lat, lng: position.lng,
+        address, pericolosita, stato: 'segnalata',
+        descrizione, foto_url, foto_validata: ai.valid,
+        note_comune: '', segnalante_nome: profile?.nome || session.user.email,
       })
-
       onSubmit(nuova)
-      showToast('✅ Segnalazione inviata con successo!', 'success')
-      setStep(1); setFoto(null); setFotoUrl(null); setPosition(null)
-      setAddress(''); setPericolosita(''); setDescrizione(''); setAiResult(null)
+      showToast('✅ Segnalazione inviata!', 'success')
+      setStep(1); setFoto(null); setFotoUrl(null); setPosition(null); setAddress(''); setPericolosita(''); setDescrizione(''); setAiResult(null)
       setPage('mappa')
-    } catch (e) {
-      showToast('Errore nell\'invio: ' + e.message, 'error')
-    } finally {
-      setLoading(false)
-    }
+    } catch (e) { showToast('Errore: ' + e.message, 'error') }
+    finally { setLoading(false) }
   }
 
-  const steps = ['Foto', 'Posizione', 'Pericolosità', 'Dettagli']
+  const STEPS = ['Foto', 'Posizione', 'Pericolo', 'Invia']
 
   return (
-    <div style={{ minHeight: 'calc(100dvh - 54px)', background: '#0f172a', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '28px 16px 40px' }}>
-      <div style={{ width: '100%', maxWidth: 560 }}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <h1 style={{ color: '#e2e8f0', fontSize: 22, fontWeight: 700, marginBottom: 6 }}>Segnala una buca</h1>
+    <div style={{ minHeight: 'calc(100dvh - 52px - 56px)', background: '#0f172a', padding: '20px 16px 32px' }}>
+      <div style={{ maxWidth: 540, margin: '0 auto' }}>
+
+        {/* Header */}
+        <div style={{ marginBottom: 24 }}>
+          <h1 style={{ color: '#e2e8f0', fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Segnala una buca</h1>
           <p style={{ color: '#64748b', fontSize: 14 }}>Aiuta il tuo comune a migliorare le strade</p>
         </div>
 
         {/* Stepper */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 28 }}>
-          {steps.map((s, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', flex: i < steps.length - 1 ? 1 : 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+          {STEPS.map((s, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', flex: i < STEPS.length - 1 ? 1 : 0 }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: step > i+1 ? '#22c55e' : step === i+1 ? '#3b82f6' : '#1e293b', border: `2px solid ${step > i+1 ? '#22c55e' : step === i+1 ? '#3b82f6' : '#334155'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: step >= i+1 ? 'white' : '#64748b', fontWeight: 700, fontSize: 13, transition: 'all .3s' }}>
+                <div style={{ width: 34, height: 34, borderRadius: '50%', background: step > i+1 ? '#22c55e' : step === i+1 ? '#3b82f6' : '#1e293b', border: `2px solid ${step > i+1 ? '#22c55e' : step === i+1 ? '#3b82f6' : '#334155'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: step >= i+1 ? 'white' : '#475569', fontWeight: 700, fontSize: 13, transition: 'all .3s' }}>
                   {step > i+1 ? '✓' : i+1}
                 </div>
-                <span style={{ color: step === i+1 ? '#3b82f6' : '#64748b', fontSize: 10, marginTop: 3, whiteSpace: 'nowrap' }}>{s}</span>
+                <span style={{ color: step === i+1 ? '#3b82f6' : '#475569', fontSize: 10, marginTop: 4, whiteSpace: 'nowrap', fontWeight: step === i+1 ? 600 : 400 }}>{s}</span>
               </div>
-              {i < steps.length - 1 && <div style={{ flex: 1, height: 2, background: step > i+1 ? '#22c55e' : '#1e293b', margin: '0 6px', marginBottom: 16, transition: 'all .3s' }} />}
+              {i < STEPS.length - 1 && <div style={{ flex: 1, height: 2, background: step > i+1 ? '#22c55e' : '#334155', margin: '0 4px', marginBottom: 18, transition: 'all .3s' }} />}
             </div>
           ))}
         </div>
 
         <Card className="fade-in">
-          {/* Step 1 - Foto */}
+          {/* Step 1 */}
           {step === 1 && (
             <div>
-              <h2 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 600, marginBottom: 5 }}>Carica una foto</h2>
-              <p style={{ color: '#64748b', fontSize: 13, marginBottom: 18 }}>Scatta o carica una foto della buca stradale</p>
-              <label style={{ display: 'block', border: `2px dashed ${fotoUrl ? '#22c55e' : '#334155'}`, borderRadius: 12, cursor: 'pointer', overflow: 'hidden', padding: fotoUrl ? 0 : 40, textAlign: 'center' }}>
+              <h2 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 700, marginBottom: 6 }}>📷 Carica una foto</h2>
+              <p style={{ color: '#64748b', fontSize: 14, marginBottom: 18, lineHeight: 1.5 }}>Scatta una foto della buca. La foto verrà analizzata dall'AI.</p>
+              <label style={{ display: 'block', border: `2px dashed ${fotoUrl ? '#22c55e' : '#334155'}`, borderRadius: 14, cursor: 'pointer', overflow: 'hidden', minHeight: fotoUrl ? 0 : 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <input type="file" accept="image/*" capture="environment" onChange={handleFoto} style={{ display: 'none' }} />
                 {fotoUrl
-                  ? <div><img src={fotoUrl} alt="Preview" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} /><div style={{ padding: 10, color: '#22c55e', fontSize: 13, background: '#052e16' }}>✓ Foto caricata — tocca per cambiare</div></div>
-                  : <div><div style={{ fontSize: 44, marginBottom: 10 }}>📷</div><div style={{ color: '#94a3b8', fontWeight: 600, marginBottom: 4 }}>Tocca per caricare</div><div style={{ color: '#64748b', fontSize: 12 }}>JPG, PNG, WebP</div></div>
+                  ? <div style={{ width: '100%' }}><img src={fotoUrl} alt="Preview" style={{ width: '100%', maxHeight: 240, objectFit: 'cover', display: 'block' }} /><div style={{ padding: '12px', color: '#22c55e', fontSize: 14, fontWeight: 600, background: '#052e16', textAlign: 'center' }}>✓ Foto caricata — tocca per cambiare</div></div>
+                  : <div style={{ textAlign: 'center', padding: 32 }}><div style={{ fontSize: 52, marginBottom: 12 }}>📷</div><div style={{ color: '#e2e8f0', fontWeight: 600, fontSize: 16, marginBottom: 4 }}>Tocca per scattare o caricare</div><div style={{ color: '#64748b', fontSize: 13 }}>JPG, PNG, WebP</div></div>
                 }
               </label>
             </div>
           )}
 
-          {/* Step 2 - Posizione */}
+          {/* Step 2 */}
           {step === 2 && (
             <div>
-              <h2 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 600, marginBottom: 14 }}>Seleziona la posizione</h2>
-              <button onClick={handleGPS} className="btn-p" disabled={loading} style={{ marginBottom: 12 }}>
+              <h2 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 700, marginBottom: 14 }}>📍 Posizione della buca</h2>
+              <button onClick={handleGPS} className="btn-p" disabled={loading} style={{ marginBottom: 14 }}>
                 {loading ? <><Spinner /> Rilevamento GPS...</> : '📡 Usa la mia posizione GPS'}
               </button>
-              <div ref={mapRef2} style={{ height: 240, borderRadius: 10, marginBottom: 10, border: '1px solid #334155', overflow: 'hidden' }} />
-              <div style={{ color: '#64748b', fontSize: 12, marginBottom: 8 }}>Oppure tocca sulla mappa per selezionare</div>
-              {address && <div style={{ background: '#0f172a', borderRadius: 8, padding: '10px 14px', color: '#94a3b8', fontSize: 13 }}>📍 {address}</div>}
+              <div style={{ color: '#64748b', fontSize: 13, textAlign: 'center', marginBottom: 10 }}>— oppure tocca sulla mappa —</div>
+              <div ref={mapRef2} style={{ height: 220, borderRadius: 12, marginBottom: 12, border: '1px solid #334155', overflow: 'hidden' }} />
+              {address && (
+                <div style={{ background: '#0f172a', borderRadius: 10, padding: '12px 14px', color: '#94a3b8', fontSize: 13, lineHeight: 1.5 }}>
+                  📍 {address}
+                </div>
+              )}
               {dupAlert && (
-                <div style={{ background: '#451a03', border: '1px solid #f97316', borderRadius: 8, padding: '12px 14px', marginTop: 10 }}>
-                  <div style={{ color: '#fb923c', fontWeight: 600, marginBottom: 4, fontSize: 13 }}>⚠️ Possibile duplicato rilevato</div>
-                  <div style={{ color: '#94a3b8', fontSize: 12 }}>Esiste già una segnalazione entro 50m: "{dupAlert.address}" · {STATO_CONFIG[dupAlert.stato]?.label}</div>
+                <div style={{ background: '#451a03', border: '1.5px solid #f97316', borderRadius: 10, padding: '14px', marginTop: 12 }}>
+                  <div style={{ color: '#fb923c', fontWeight: 700, marginBottom: 5, fontSize: 14 }}>⚠️ Possibile duplicato rilevato</div>
+                  <div style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5 }}>Esiste già una segnalazione entro 50m: "{dupAlert.address}" · <strong>{STATO_CONFIG[dupAlert.stato]?.label}</strong></div>
                 </div>
               )}
             </div>
           )}
 
-          {/* Step 3 - Pericolosità */}
+          {/* Step 3 */}
           {step === 3 && (
             <div>
-              <h2 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 600, marginBottom: 5 }}>Livello di pericolosità</h2>
-              <p style={{ color: '#64748b', fontSize: 13, marginBottom: 18 }}>Quanto è pericolosa questa buca?</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <h2 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 700, marginBottom: 6 }}>⚠️ Livello di pericolosità</h2>
+              <p style={{ color: '#64748b', fontSize: 14, marginBottom: 18 }}>Quanto è pericolosa questa buca?</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[
-                  { k: 'bassa', emoji: '🟢', desc: 'Piccola buca, disagio minimo' },
-                  { k: 'media', emoji: '🟡', desc: 'Buca evidente, rischio su due ruote' },
-                  { k: 'alta', emoji: '🟠', desc: 'Buca profonda, pericolo concreto' },
-                  { k: 'critica', emoji: '🔴', desc: 'Buca grave, urgente intervento' },
+                  { k: 'bassa',   e: '🟢', d: 'Piccola buca, disagio minimo' },
+                  { k: 'media',   e: '🟡', d: 'Buca evidente, rischio su due ruote' },
+                  { k: 'alta',    e: '🟠', d: 'Buca profonda, pericolo concreto' },
+                  { k: 'critica', e: '🔴', d: 'Buca grave, urgente intervento' },
                 ].map(opt => (
                   <button key={opt.k} onClick={() => setPericolosita(opt.k)}
-                    style={{ background: '#0f172a', border: `2px solid ${pericolosita === opt.k ? PERICOLOSITA_CONFIG[opt.k].color : '#334155'}`, borderRadius: 10, padding: '12px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, transition: 'all .15s', fontFamily: 'inherit', textAlign: 'left' }}>
-                    <span style={{ fontSize: 20 }}>{opt.emoji}</span>
+                    style={{ background: pericolosita === opt.k ? '#0f172a' : '#0f172a', border: `2px solid ${pericolosita === opt.k ? PERICOLOSITA_CONFIG[opt.k].color : '#334155'}`, borderRadius: 12, padding: '14px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, transition: 'all .15s', fontFamily: 'inherit', textAlign: 'left', minHeight: 64 }}>
+                    <span style={{ fontSize: 26 }}>{opt.e}</span>
                     <div style={{ flex: 1 }}>
-                      <div style={{ color: PERICOLOSITA_CONFIG[opt.k].color, fontWeight: 700, fontSize: 14 }}>{PERICOLOSITA_CONFIG[opt.k].label}</div>
-                      <div style={{ color: '#64748b', fontSize: 12 }}>{opt.desc}</div>
+                      <div style={{ color: PERICOLOSITA_CONFIG[opt.k].color, fontWeight: 700, fontSize: 15 }}>{PERICOLOSITA_CONFIG[opt.k].label}</div>
+                      <div style={{ color: '#64748b', fontSize: 13, marginTop: 2 }}>{opt.d}</div>
                     </div>
-                    {pericolosita === opt.k && <span style={{ color: PERICOLOSITA_CONFIG[opt.k].color }}>✓</span>}
+                    {pericolosita === opt.k && <span style={{ color: PERICOLOSITA_CONFIG[opt.k].color, fontSize: 20 }}>✓</span>}
                   </button>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Step 4 - Dettagli */}
+          {/* Step 4 */}
           {step === 4 && (
             <div>
-              <h2 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 600, marginBottom: 5 }}>Descrizione (opzionale)</h2>
-              <p style={{ color: '#64748b', fontSize: 13, marginBottom: 14 }}>Aggiungi dettagli utili per il comune</p>
-              <textarea value={descrizione} onChange={e => setDescrizione(e.target.value)} placeholder="Es: buca vicino all'incrocio, pericolosa per le moto..." style={{ marginBottom: 14 }} />
+              <h2 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 700, marginBottom: 6 }}>📝 Dettagli finali</h2>
+              <p style={{ color: '#64748b', fontSize: 14, marginBottom: 14 }}>Aggiungi dettagli utili (opzionale)</p>
+              <textarea value={descrizione} onChange={e => setDescrizione(e.target.value)} placeholder="Es: buca vicino all'incrocio, pericolosa per moto..." style={{ marginBottom: 16 }} />
               {aiResult && (
-                <div style={{ background: aiResult.valid ? '#052e16' : '#450a0a', border: `1px solid ${aiResult.valid ? '#22c55e' : '#ef4444'}`, borderRadius: 8, padding: '12px 14px', marginBottom: 14 }}>
-                  <div style={{ color: aiResult.valid ? '#22c55e' : '#ef4444', fontWeight: 600, marginBottom: 3, fontSize: 13 }}>
+                <div style={{ background: aiResult.valid ? '#052e16' : '#450a0a', border: `1.5px solid ${aiResult.valid ? '#22c55e' : '#ef4444'}`, borderRadius: 10, padding: '14px', marginBottom: 16 }}>
+                  <div style={{ color: aiResult.valid ? '#22c55e' : '#ef4444', fontWeight: 700, marginBottom: 4, fontSize: 14 }}>
                     {aiResult.valid ? '✅ Foto validata dall\'AI' : '❌ Foto non valida'}
                   </div>
                   <div style={{ color: '#94a3b8', fontSize: 13 }}>{aiResult.result?.messaggio}</div>
                 </div>
               )}
-              <div style={{ background: '#0f172a', borderRadius: 10, padding: 14, marginBottom: 4 }}>
-                <div style={{ color: '#64748b', fontSize: 11, fontWeight: 700, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.5px' }}>Riepilogo</div>
-                <div style={{ display: 'grid', gap: 8 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-                    <span style={{ color: '#64748b', fontSize: 13, flexShrink: 0 }}>Indirizzo:</span>
-                    <span style={{ color: '#94a3b8', fontSize: 13, textAlign: 'right' }}>{address || '—'}</span>
+              {/* Riepilogo */}
+              <div style={{ background: '#0f172a', borderRadius: 12, padding: 16 }}>
+                <div style={{ color: '#475569', fontSize: 11, fontWeight: 700, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '.5px' }}>Riepilogo segnalazione</div>
+                <div style={{ display: 'grid', gap: 10 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start' }}>
+                    <span style={{ color: '#64748b', fontSize: 14, flexShrink: 0 }}>Indirizzo</span>
+                    <span style={{ color: '#94a3b8', fontSize: 13, textAlign: 'right', lineHeight: 1.4 }}>{address || '—'}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ color: '#64748b', fontSize: 13 }}>Pericolosità:</span>
+                    <span style={{ color: '#64748b', fontSize: 14 }}>Pericolosità</span>
                     {pericolosita && <Badge cfg={PERICOLOSITA_CONFIG[pericolosita]}>{PERICOLOSITA_CONFIG[pericolosita].label}</Badge>}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748b', fontSize: 13 }}>Foto:</span>
-                    <span style={{ color: foto ? '#22c55e' : '#ef4444', fontSize: 13 }}>{foto ? '✓ Caricata' : '✗ Mancante'}</span>
+                    <span style={{ color: '#64748b', fontSize: 14 }}>Foto</span>
+                    <span style={{ color: foto ? '#22c55e' : '#ef4444', fontSize: 14, fontWeight: 600 }}>{foto ? '✓ Caricata' : '✗ Mancante'}</span>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Nav buttons */}
-          <div style={{ display: 'flex', gap: 8, marginTop: 22 }}>
-            {step > 1 && <button onClick={() => setStep(s => s - 1)} className="btn-g">← Indietro</button>}
+          {/* Navigazione step */}
+          <div style={{ display: 'flex', gap: 10, marginTop: 22 }}>
+            {step > 1 && <button onClick={() => setStep(s => s - 1)} className="btn-g" style={{ flex: 1 }}>← Indietro</button>}
             {step < 4 && (
-              <button className="btn-p" onClick={() => {
+              <button className="btn-p" style={{ flex: 2 }} onClick={() => {
                 if (step === 1 && !foto) { showToast('Carica una foto prima di procedere', 'error'); return }
                 if (step === 2 && !position) { showToast('Seleziona la posizione sulla mappa', 'error'); return }
                 if (step === 3 && !pericolosita) { showToast('Seleziona il livello di pericolosità', 'error'); return }
-                if (step === 2) { const dup = checkDuplicati(position); setDupAlert(dup || null) }
                 setStep(s => s + 1)
               }}>Avanti →</button>
             )}
             {step === 4 && (
-              <button className="btn-p" onClick={handleSubmit} disabled={loading}>
+              <button className="btn-p" style={{ flex: 2 }} onClick={handleSubmit} disabled={loading}>
                 {loading ? <><Spinner /> Invio in corso...</> : '📤 Invia segnalazione'}
               </button>
             )}
@@ -808,7 +790,9 @@ function DashboardPage({ segnalazioni, onUpdate, showToast }) {
   const filtered = segnalazioni.filter(s =>
     (filtroStato === 'tutti' || s.stato === filtroStato) &&
     (filtroPerc === 'tutti' || s.pericolosita === filtroPerc) &&
-    (!search || s.address?.toLowerCase().includes(search.toLowerCase()) || s.descrizione?.toLowerCase().includes(search.toLowerCase()) || s.segnalante_nome?.toLowerCase().includes(search.toLowerCase()))
+    (!search || s.address?.toLowerCase().includes(search.toLowerCase()) ||
+     s.descrizione?.toLowerCase().includes(search.toLowerCase()) ||
+     s.segnalante_nome?.toLowerCase().includes(search.toLowerCase()))
   )
 
   const agg = {
@@ -819,44 +803,36 @@ function DashboardPage({ segnalazioni, onUpdate, showToast }) {
     validate: segnalazioni.filter(s => s.foto_validata).length,
   }
 
-  const openEdit = (s) => {
-    setEditing(s)
-    setEditData({ stato: s.stato, pericolosita: s.pericolosita, foto_validata: s.foto_validata, note_comune: s.note_comune || '' })
-  }
-
   const saveEdit = async () => {
     setSaving(true)
     try {
       const updated = await updateSegnalazione(editing.id, editData)
       onUpdate(editing.id, updated)
-      showToast('✅ Segnalazione aggiornata', 'success')
+      showToast('✅ Aggiornata con successo', 'success')
       setEditing(null)
-    } catch (e) {
-      showToast('Errore nel salvataggio: ' + e.message, 'error')
-    } finally {
-      setSaving(false)
-    }
+    } catch (e) { showToast('Errore: ' + e.message, 'error') }
+    finally { setSaving(false) }
   }
 
   return (
-    <div style={{ minHeight: 'calc(100dvh - 54px)', background: '#0f172a', padding: '24px 16px' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
-        <div style={{ marginBottom: 22 }}>
+    <div style={{ minHeight: 'calc(100dvh - 52px - 56px)', background: '#0f172a', padding: '20px 16px 32px' }}>
+      <div style={{ maxWidth: 720, margin: '0 auto' }}>
+        <div style={{ marginBottom: 20 }}>
           <h1 style={{ color: '#e2e8f0', fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Dashboard Comune</h1>
           <p style={{ color: '#64748b', fontSize: 14 }}>Gestione e monitoraggio segnalazioni</p>
         </div>
 
-        {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10, marginBottom: 24 }}>
+        {/* Stats — scrollabili su mobile */}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 20, overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: 4 }}>
           {[
             { label: 'Totali', val: agg.totale, color: '#3b82f6', icon: '📋' },
             { label: 'Critiche', val: agg.critiche, color: '#ef4444', icon: '🔴' },
-            { label: 'In lavorazione', val: agg.in_lavorazione, color: '#f59e0b', icon: '🔧' },
+            { label: 'In lavoro', val: agg.in_lavorazione, color: '#f59e0b', icon: '🔧' },
             { label: 'Risolte', val: agg.risolte, color: '#22c55e', icon: '✅' },
-            { label: 'Validate AI', val: agg.validate, color: '#8b5cf6', icon: '🤖' },
+            { label: 'AI validate', val: agg.validate, color: '#8b5cf6', icon: '🤖' },
           ].map(s => (
-            <div key={s.label} style={{ background: '#1e293b', borderRadius: 12, padding: '14px 16px', border: '1px solid #334155' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <div key={s.label} style={{ background: '#1e293b', borderRadius: 12, padding: '14px 16px', border: '1px solid #334155', flexShrink: 0, minWidth: 110 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <span style={{ fontSize: 18 }}>{s.icon}</span>
                 <span style={{ color: s.color, fontSize: 22, fontWeight: 700 }}>{s.val}</span>
               </div>
@@ -866,85 +842,94 @@ function DashboardPage({ segnalazioni, onUpdate, showToast }) {
         </div>
 
         {/* Filtri */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 Cerca per indirizzo, descrizione, utente..." style={{ flex: 1, minWidth: 200 }} />
-          <select value={filtroStato} onChange={e => setFiltroStato(e.target.value)} style={{ width: 'auto' }}>
-            <option value="tutti">Tutti gli stati</option>
-            {Object.entries(STATO_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-          </select>
-          <select value={filtroPerc} onChange={e => setFiltroPerc(e.target.value)} style={{ width: 'auto' }}>
-            <option value="tutti">Tutti i livelli</option>
-            {Object.entries(PERICOLOSITA_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-          </select>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 Cerca per indirizzo, descrizione, utente..." />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <select value={filtroStato} onChange={e => setFiltroStato(e.target.value)} style={{ flex: 1 }}>
+              <option value="tutti">Tutti gli stati</option>
+              {Object.entries(STATO_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+            </select>
+            <select value={filtroPerc} onChange={e => setFiltroPerc(e.target.value)} style={{ flex: 1 }}>
+              <option value="tutti">Tutti i livelli</option>
+              {Object.entries(PERICOLOSITA_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+            </select>
+          </div>
         </div>
 
-        <div style={{ color: '#64748b', fontSize: 12, marginBottom: 12 }}>{filtered.length} segnalazioni trovate</div>
+        <div style={{ color: '#475569', fontSize: 13, marginBottom: 12 }}>{filtered.length} segnalazioni trovate</div>
 
-        <div style={{ display: 'grid', gap: 8 }}>
+        <div style={{ display: 'grid', gap: 10 }}>
           {filtered.map(s => (
-            <div key={s.id} style={{ background: '#1e293b', borderRadius: 12, border: '1px solid #334155', padding: 14, display: 'grid', gridTemplateColumns: '72px 1fr auto', gap: 12, alignItems: 'center' }}>
-              <div style={{ width: 72, height: 58, borderRadius: 8, background: '#0f172a', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
-                {s.foto_url ? <img src={s.foto_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🕳️'}
-              </div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ color: '#e2e8f0', fontWeight: 600, fontSize: 13, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.address}</div>
-                <div style={{ color: '#64748b', fontSize: 11, marginBottom: 6 }}>
-                  {new Date(s.created_at).toLocaleDateString('it-IT')} · {s.segnalante_nome || s.profiles?.nome || 'Utente'}
+            <div key={s.id} style={{ background: '#1e293b', borderRadius: 14, border: '1px solid #334155', overflow: 'hidden' }}>
+              <div style={{ display: 'flex', gap: 0 }}>
+                {/* Foto */}
+                <div style={{ width: 80, flexShrink: 0, background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>
+                  {s.foto_url ? <img src={s.foto_url} alt="" style={{ width: 80, height: '100%', minHeight: 80, objectFit: 'cover' }} /> : '🕳️'}
                 </div>
-                <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-                  <Badge cfg={PERICOLOSITA_CONFIG[s.pericolosita]}>⚠️ {PERICOLOSITA_CONFIG[s.pericolosita]?.label}</Badge>
-                  <Badge cfg={STATO_CONFIG[s.stato]}>{STATO_CONFIG[s.stato]?.label}</Badge>
-                  {s.foto_validata && <Badge cfg={{ bg: '#1e1b4b', text: '#818cf8' }}>🤖 AI</Badge>}
+                {/* Info */}
+                <div style={{ flex: 1, padding: '12px 12px 12px 14px', minWidth: 0 }}>
+                  <div style={{ color: '#e2e8f0', fontWeight: 600, fontSize: 14, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.address}</div>
+                  <div style={{ color: '#475569', fontSize: 12, marginBottom: 8 }}>{new Date(s.created_at).toLocaleDateString('it-IT')} · {s.segnalante_nome || s.profiles?.nome || 'Utente'}</div>
+                  <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <Badge cfg={PERICOLOSITA_CONFIG[s.pericolosita]}>⚠️ {PERICOLOSITA_CONFIG[s.pericolosita]?.label}</Badge>
+                    <Badge cfg={STATO_CONFIG[s.stato]}>{STATO_CONFIG[s.stato]?.label}</Badge>
+                  </div>
                 </div>
               </div>
-              <button onClick={() => openEdit(s)} className="btn-g" style={{ width: 'auto', padding: '8px 12px', fontSize: 13 }}>✏️</button>
+              {/* Action bar */}
+              <div style={{ borderTop: '1px solid #334155', padding: '10px 14px', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+                {s.foto_validata && <span style={{ color: '#818cf8', fontSize: 12, alignSelf: 'center', marginRight: 'auto' }}>🤖 AI validata</span>}
+                <button onClick={() => { setEditing(s); setEditData({ stato: s.stato, pericolosita: s.pericolosita, foto_validata: s.foto_validata, note_comune: s.note_comune || '' }) }} className="btn-sm">
+                  ✏️ Modifica
+                </button>
+              </div>
             </div>
           ))}
           {filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '50px 0', color: '#64748b' }}>
-              <div style={{ fontSize: 36, marginBottom: 10 }}>🔍</div>
-              <div style={{ fontSize: 14 }}>Nessuna segnalazione trovata</div>
+            <div style={{ textAlign: 'center', padding: '50px 0', color: '#475569' }}>
+              <div style={{ fontSize: 40, marginBottom: 10 }}>🔍</div>
+              <div style={{ fontSize: 15 }}>Nessuna segnalazione trovata</div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Modal modifica */}
+      {/* Modal modifica — bottom sheet */}
       {editing && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(0,0,0,.7)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setEditing(null)}>
-          <div style={{ background: '#1e293b', borderRadius: '16px 16px 0 0', padding: 24, width: '100%', maxWidth: 520, border: '1px solid #334155', maxHeight: '85dvh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(0,0,0,.7)', display: 'flex', alignItems: 'flex-end' }} onClick={() => setEditing(null)}>
+          <div style={{ background: '#1e293b', borderRadius: '20px 20px 0 0', padding: '20px 20px calc(20px + env(safe-area-inset-bottom))', width: '100%', maxWidth: 540, margin: '0 auto', border: '1px solid #334155', maxHeight: '88dvh', overflowY: 'auto' }} className="slide-up" onClick={e => e.stopPropagation()}>
             <div style={{ width: 40, height: 4, background: '#334155', borderRadius: 2, margin: '0 auto 18px' }} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-              <h3 style={{ color: '#e2e8f0', fontSize: 17, fontWeight: 700 }}>Modifica segnalazione</h3>
-              <button onClick={() => setEditing(null)} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 20, padding: 4 }}>✕</button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h3 style={{ color: '#e2e8f0', fontSize: 18, fontWeight: 700 }}>Modifica segnalazione</h3>
+              <button onClick={() => setEditing(null)} style={{ background: '#0f172a', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 18, padding: 8, borderRadius: 8 }}>✕</button>
             </div>
-            {editing.foto_url && <img src={editing.foto_url} alt="Buca" style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 10, marginBottom: 14 }} />}
-            <div style={{ color: '#94a3b8', fontSize: 13, marginBottom: 18, padding: '10px 14px', background: '#0f172a', borderRadius: 8 }}>📍 {editing.address}</div>
-            <div style={{ display: 'grid', gap: 14 }}>
+            {editing.foto_url && <img src={editing.foto_url} alt="" style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 12, marginBottom: 14 }} />}
+            <div style={{ background: '#0f172a', borderRadius: 10, padding: '12px 14px', marginBottom: 18, color: '#94a3b8', fontSize: 14, lineHeight: 1.5 }}>📍 {editing.address}</div>
+            <div style={{ display: 'grid', gap: 16 }}>
               <div>
-                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 6 }}>Stato</label>
+                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 8 }}>Stato</label>
                 <select value={editData.stato} onChange={e => setEditData(d => ({ ...d, stato: e.target.value }))}>
                   {Object.entries(STATO_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 6 }}>Pericolosità</label>
+                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 8 }}>Pericolosità</label>
                 <select value={editData.pericolosita} onChange={e => setEditData(d => ({ ...d, pericolosita: e.target.value }))}>
                   {Object.entries(PERICOLOSITA_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                 </select>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <input type="checkbox" id="val" checked={editData.foto_validata} onChange={e => setEditData(d => ({ ...d, foto_validata: e.target.checked }))} style={{ width: 16, height: 16, accentColor: '#3b82f6' }} />
-                <label htmlFor="val" style={{ color: '#94a3b8', fontSize: 14, cursor: 'pointer' }}>Foto validata manualmente</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px', background: '#0f172a', borderRadius: 10 }}>
+                <input type="checkbox" id="val" checked={editData.foto_validata} onChange={e => setEditData(d => ({ ...d, foto_validata: e.target.checked }))} style={{ width: 20, height: 20, accentColor: '#3b82f6', flexShrink: 0 }} />
+                <label htmlFor="val" style={{ color: '#94a3b8', fontSize: 15, cursor: 'pointer', lineHeight: 1.4 }}>Foto validata manualmente</label>
               </div>
               <div>
-                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 6 }}>Note ufficiali del comune</label>
-                <textarea value={editData.note_comune} onChange={e => setEditData(d => ({ ...d, note_comune: e.target.value }))} placeholder="Inserisci note ufficiali..." />
+                <label style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 8 }}>Note ufficiali del comune</label>
+                <textarea value={editData.note_comune} onChange={e => setEditData(d => ({ ...d, note_comune: e.target.value }))} placeholder="Inserisci note ufficiali per il cittadino..." />
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
-              <button onClick={() => setEditing(null)} className="btn-g">Annulla</button>
-              <button onClick={saveEdit} className="btn-p" disabled={saving}>
+            <div style={{ display: 'flex', gap: 10, marginTop: 22 }}>
+              <button onClick={() => setEditing(null)} className="btn-g" style={{ flex: 1 }}>Annulla</button>
+              <button onClick={saveEdit} className="btn-p" disabled={saving} style={{ flex: 2 }}>
                 {saving ? <Spinner /> : '💾 Salva modifiche'}
               </button>
             </div>
