@@ -43,6 +43,7 @@ body{font-family:'DM Sans','Segoe UI',sans-serif;background:#0f172a}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#1e293b}::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(59,130,246,0.3)}50%{box-shadow:0 0 0 8px rgba(59,130,246,0.1)}}
 .fade-in{animation:fadeIn .2s ease}
 .spin{animation:spin 1s linear infinite;display:inline-block}
 .btn-p{background:#3b82f6;color:#fff;border:none;padding:11px 20px;border-radius:9px;cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;transition:all .15s;width:100%}
@@ -335,6 +336,8 @@ function MappaPage({ segnalazioni, loading }) {
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)
   const markersRef = useRef([])
+  const userMarkerRef = useRef(null)
+  const [gpsLoading, setGpsLoading] = useState(false)
 
   const visible = segnalazioni.filter(s =>
     (isAdmin || (s.foto_validata && s.stato !== 'rifiutata')) &&
@@ -384,6 +387,28 @@ function MappaPage({ segnalazioni, loading }) {
     }
   }, [visible])
 
+  const handleMyLocation = () => {
+    if (!navigator.geolocation) return
+    setGpsLoading(true)
+    navigator.geolocation.getCurrentPosition(({ coords: { latitude: lat, longitude: lng } }) => {
+      const map = mapInstanceRef.current
+      if (!map) return
+      // Rimuovi marker utente precedente
+      if (userMarkerRef.current) map.removeLayer(userMarkerRef.current)
+      // Crea marker blu pulsante per la posizione utente
+      const icon = L.divIcon({
+        html: `<div style="width:18px;height:18px;border-radius:50%;background:#3b82f6;border:3px solid white;box-shadow:0 0 0 4px rgba(59,130,246,0.3);animation:pulse 1.5s infinite"></div>`,
+        className: '', iconSize: [18, 18], iconAnchor: [9, 9]
+      })
+      userMarkerRef.current = L.marker([lat, lng], { icon })
+        .addTo(map)
+        .bindPopup('<div style="color:#1e293b;font-weight:600;font-size:13px">📍 La tua posizione</div>')
+        .openPopup()
+      map.setView([lat, lng], 15)
+      setGpsLoading(false)
+    }, () => setGpsLoading(false))
+  }
+
   return (
     <div style={{ height: 'calc(100dvh - 54px)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       {/* Stats */}
@@ -426,6 +451,14 @@ function MappaPage({ segnalazioni, loading }) {
             <span style={{ color: '#e2e8f0', fontSize: 12 }}>{v.label}</span>
           </div>
         ))}
+      </div>
+
+      {/* Bottone posizione utente */}
+      <div style={{ position: 'absolute', top: 70, right: 12, zIndex: 500 }}>
+        <button onClick={handleMyLocation} disabled={gpsLoading}
+          style={{ background: gpsLoading ? '#1e293b' : '#0f172a', border: '1px solid #334155', color: gpsLoading ? '#64748b' : '#3b82f6', borderRadius: 10, padding: '8px 14px', cursor: gpsLoading ? 'default' : 'pointer', fontFamily: 'inherit', fontWeight: 600, fontSize: 13, display: 'flex', alignItems: 'center', gap: 7, boxShadow: '0 2px 12px rgba(0,0,0,.4)', transition: 'all .15s', backdropFilter: 'blur(8px)' }}>
+          {gpsLoading ? <><span className="spin" style={{fontSize:14}}>⟳</span> Ricerca...</> : <>📍 La mia posizione</>}
+        </button>
       </div>
 
       <div ref={mapRef} style={{ flex: 1 }} />
