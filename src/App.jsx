@@ -597,13 +597,37 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
   }
 
   const analyzeWithAI = async () => {
-    if (!foto) return { valid: true, result: { valida: true, messaggio: 'Nessuna foto — validazione manuale' } }
+    // Senza foto blocca sempre — la foto è obbligatoria per la validazione
+    if (!foto) return {
+      valid: false,
+      result: { valida: false, messaggio: 'La foto è obbligatoria per inviare una segnalazione.' }
+    }
     try {
-      const base64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(foto) })
-      const resp = await fetch('/api/analyze-photo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ imageBase64: base64, mediaType: foto.type || 'image/jpeg' }) })
+      const base64 = await new Promise((res, rej) => {
+        const r = new FileReader()
+        r.onload = () => res(r.result.split(',')[1])
+        r.onerror = rej
+        r.readAsDataURL(foto)
+      })
+      const resp = await fetch('/api/analyze-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64, mediaType: foto.type || 'image/jpeg' })
+      })
+      if (!resp.ok) {
+        // Errore HTTP → blocca sempre
+        return { valid: false, result: { valida: false, messaggio: 'Errore di rete durante la validazione. Riprova.' } }
+      }
       const p = await resp.json()
-      return { valid: p.valida && !p.contiene_persone, result: p }
-    } catch { return { valid: true, result: { valida: true, messaggio: 'AI non disponibile' } } }
+      // Valido solo se il server dice esplicitamente valida: true
+      return { valid: p.valida === true, result: p }
+    } catch {
+      // Qualsiasi errore (rete, parsing, ecc.) → blocca sempre, non passare mai
+      return {
+        valid: false,
+        result: { valida: false, messaggio: 'Validazione AI non raggiungibile. Controlla la connessione e riprova.' }
+      }
+    }
   }
 
   const handleSubmit = async () => {
@@ -727,10 +751,16 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
               <textarea value={descrizione} onChange={e => setDescrizione(e.target.value)} placeholder="Es: buca vicino all'incrocio, pericolosa per moto..." style={{ marginBottom: 16 }} />
               {aiResult && (
                 <div style={{ background: aiResult.valid ? '#052e16' : '#450a0a', border: `1.5px solid ${aiResult.valid ? '#22c55e' : '#ef4444'}`, borderRadius: 10, padding: '14px', marginBottom: 16 }}>
-                  <div style={{ color: aiResult.valid ? '#22c55e' : '#ef4444', fontWeight: 700, marginBottom: 4, fontSize: 14 }}>
-                    {aiResult.valid ? '✅ Foto validata dall\'AI' : '❌ Foto non valida'}
+                  <div style={{ color: aiResult.valid ? '#22c55e' : '#ef4444', fontWeight: 700, marginBottom: 6, fontSize: 14 }}>
+                    {aiResult.valid ? '✅ Foto validata — mostra una buca stradale reale' : '❌ Foto non accettata'}
                   </div>
-                  <div style={{ color: '#94a3b8', fontSize: 13 }}>{aiResult.result?.messaggio}</div>
+                  <div style={{ color: '#94a3b8', fontSize: 13, lineHeight: 1.5 }}>{aiResult.result?.messaggio}</div>
+                  {!aiResult.valid && (
+                    <div style={{ marginTop: 10, padding: '10px 12px', background: 'rgba(0,0,0,.3)', borderRadius: 8 }}>
+                      <div style={{ color: '#f87171', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>⛔ La segnalazione non verrà inviata.</div>
+                      <div style={{ color: '#94a3b8', fontSize: 12, lineHeight: 1.5 }}>Torna allo step 1 e carica una foto che mostri chiaramente una buca o un danno al manto stradale, senza persone visibili.</div>
+                    </div>
+                  )}
                 </div>
               )}
               {/* Riepilogo */}
