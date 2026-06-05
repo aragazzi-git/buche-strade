@@ -596,6 +596,43 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
     return segnalazioni.find(s => s.stato !== 'risolta' && s.stato !== 'rifiutata' && dist(s) <= 50)
   }
 
+  // Ridimensiona e comprime la foto prima di inviarla (max 1MB, max 1280px)
+  const compressFoto = (file) => new Promise((resolve, reject) => {
+    const MAX_SIZE = 1280
+    const MAX_BYTES = 1 * 1024 * 1024 // 1MB
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      let { width, height } = img
+      // Ridimensiona mantenendo le proporzioni
+      if (width > MAX_SIZE || height > MAX_SIZE) {
+        if (width > height) { height = Math.round(height * MAX_SIZE / width); width = MAX_SIZE }
+        else { width = Math.round(width * MAX_SIZE / height); height = MAX_SIZE }
+      }
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height)
+      // Compressione progressiva finché sotto 1MB
+      let quality = 0.85
+      const tryCompress = () => {
+        canvas.toBlob(blob => {
+          if (!blob) { reject(new Error('Compressione fallita')); return }
+          if (blob.size <= MAX_BYTES || quality <= 0.3) {
+            resolve(blob)
+          } else {
+            quality -= 0.1
+            tryCompress()
+          }
+        }, 'image/jpeg', quality)
+      }
+      tryCompress()
+    }
+    img.onerror = reject
+    img.src = url
+  })
+
   const analyzeWithAI = async () => {
     // Senza foto blocca sempre — la foto è obbligatoria per la validazione
     if (!foto) return {
@@ -603,26 +640,25 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
       result: { valida: false, messaggio: 'La foto è obbligatoria per inviare una segnalazione.' }
     }
     try {
+      // Comprimi la foto prima di inviarla (evita FUNCTION_PAYLOAD_TOO_LARGE)
+      const fotoCompressa = await compressFoto(foto)
       const base64 = await new Promise((res, rej) => {
         const r = new FileReader()
         r.onload = () => res(r.result.split(',')[1])
         r.onerror = rej
-        r.readAsDataURL(foto)
+        r.readAsDataURL(fotoCompressa)
       })
       const resp = await fetch('/api/analyze-photo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64, mediaType: foto.type || 'image/jpeg' })
+        body: JSON.stringify({ imageBase64: base64, mediaType: 'image/jpeg' })
       })
       if (!resp.ok) {
-        // Errore HTTP → blocca sempre
         return { valid: false, result: { valida: false, messaggio: 'Errore di rete durante la validazione. Riprova.' } }
       }
       const p = await resp.json()
-      // Valido solo se il server dice esplicitamente valida: true
       return { valid: p.valida === true, result: p }
-    } catch {
-      // Qualsiasi errore (rete, parsing, ecc.) → blocca sempre, non passare mai
+    } catch (e) {
       return {
         valid: false,
         result: { valida: false, messaggio: 'Validazione AI non raggiungibile. Controlla la connessione e riprova.' }
@@ -636,7 +672,9 @@ function SegnalaPage({ segnalazioni, onSubmit, showToast, setPage }) {
       const ai = await analyzeWithAI()
       setAiResult(ai)
       if (!ai.valid) { showToast('❌ ' + (ai.result?.messaggio || 'Foto non valida'), 'error'); setLoading(false); return }
-      const foto_url = foto ? await uploadFoto(foto, session.user.id) : null
+      // Comprimi anche per lo storage (risparmia spazio su Supabase)
+      const fotoPerUpload = foto ? await compressFoto(foto) : null
+      const foto_url = fotoPerUpload ? await uploadFoto(fotoPerUpload, session.user.id) : null
       const nuova = await insertSegnalazione({
         user_id: session.user.id, lat: position.lat, lng: position.lng,
         address, pericolosita, stato: 'segnalata',
