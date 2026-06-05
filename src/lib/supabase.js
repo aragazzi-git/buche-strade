@@ -81,7 +81,8 @@ export async function updateSegnalazione(id, updates) {
 // ── STORAGE ──────────────────────────────────────────────────
 
 export async function uploadFoto(file, userId) {
-  const ext = file.name.split('.').pop()
+  // file può essere un File (con .name) o un Blob compresso (senza .name)
+  const ext = file.name ? file.name.split('.').pop() : 'jpg'
   const path = `${userId}/${Date.now()}.${ext}`
   const { error } = await supabase.storage
     .from('foto-buche')
